@@ -19,7 +19,18 @@ class User extends Authenticatable implements MustVerifyEmail // ✅ Thêm imple
      * @var array<int, string>
      */
     protected $fillable = [
-        'name','email','password','provider','provider_id',
+        'name',
+        'email', 
+        'password',
+        'provider',
+        'provider_id',
+        'role',
+        'student_id',
+        'phone',
+        'address',
+        'bio',
+        'avatar',
+        'is_active',
     ];
 
     /**
@@ -40,5 +51,114 @@ class User extends Authenticatable implements MustVerifyEmail // ✅ Thêm imple
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_active' => 'boolean',
     ];
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is teacher
+     */
+    public function isTeacher()
+    {
+        return $this->role === 'teacher';
+    }
+
+    /**
+     * Check if user is student
+     */
+    public function isStudent()
+    {
+        return $this->role === 'student';
+    }
+
+    /**
+     * Get display role name
+     */
+    public function getRoleDisplayName()
+    {
+        return match($this->role) {
+            'admin' => 'Quản trị viên',
+            'teacher' => 'Giáo viên',
+            'student' => 'Học sinh',
+            default => 'Không xác định'
+        };
+    }
+
+    /**
+     * Get role badge color
+     */
+    public function getRoleBadgeColor()
+    {
+        return match($this->role) {
+            'admin' => 'danger',
+            'teacher' => 'warning',
+            'student' => 'primary',
+            default => 'secondary'
+        };
+    }
+
+    /**
+     * Get avatar URL
+     */
+    public function getAvatarUrl()
+    {
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+        
+        // Default avatar based on role
+        return match($this->role) {
+            'admin' => asset('images/default-admin-avatar.png'),
+            'teacher' => asset('images/default-teacher-avatar.png'),
+            'student' => asset('images/default-student-avatar.png'),
+            default => asset('images/default-avatar.png')
+        };
+    }
+
+    /**
+     * Scope to filter by role
+     */
+    public function scopeRole($query, $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    /**
+     * Scope to get active users
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope to get verified users
+     */
+    public function scopeVerified($query)
+    {
+        return $query->whereNotNull('email_verified_at');
+    }
+
+    /**
+     * Get full name with role
+     */
+    public function getFullNameWithRole()
+    {
+        return $this->name . ' (' . $this->getRoleDisplayName() . ')';
+    }
+
+    /**
+     * Get all exam attempts by this user
+     */
+    public function examAttempts()
+    {
+        return $this->hasMany(ExamAttempt::class);
+    }
 }

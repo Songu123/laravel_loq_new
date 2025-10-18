@@ -1,12 +1,12 @@
-<footer class="bg-light border-top mt-auto py-4">
+<footer class="mt-auto py-4 text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-mortarboard-fill text-primary me-2"></i>
-                    <span class="fw-bold text-primary">LOQ - Hệ thống Trắc nghiệm</span>
+                    <i class="bi bi-mortarboard-fill me-2" style="font-size: 1.5rem;"></i>
+                    <span class="fw-bold fs-5">Quiz System</span>
                 </div>
-                <p class="text-muted small">
+                <p class="small opacity-90">
                     Nền tảng quản lý và tổ chức thi trắc nghiệm trực tuyến hiện đại, 
                     hỗ trợ giáo dục và đào tạo chuyên nghiệp.
                 </p>
@@ -14,35 +14,42 @@
             <div class="col-md-3">
                 <h6 class="fw-bold mb-3">Liên kết</h6>
                 <ul class="list-unstyled">
-                    <li><a href="#" class="text-muted text-decoration-none small">Trang chủ</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none small">Hướng dẫn sử dụng</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none small">Hỗ trợ kỹ thuật</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none small">Liên hệ</a></li>
+                    <li class="mb-2"><a href="{{ route('home') }}" class="text-white text-decoration-none small opacity-75 hover-opacity-100">Trang chủ</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small opacity-75 hover-opacity-100">Hướng dẫn sử dụng</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small opacity-75 hover-opacity-100">Hỗ trợ kỹ thuật</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small opacity-75 hover-opacity-100">Liên hệ</a></li>
                 </ul>
             </div>
             <div class="col-md-3">
                 <h6 class="fw-bold mb-3">Hỗ trợ</h6>
                 <ul class="list-unstyled">
-                    <li class="text-muted small"><i class="bi bi-envelope me-1"></i> support@loq.edu.vn</li>
-                    <li class="text-muted small"><i class="bi bi-telephone me-1"></i> (84) 24 3xxx xxxx</li>
-                    <li class="text-muted small"><i class="bi bi-clock me-1"></i> T2-T6: 8:00-17:30</li>
+                    <li class="small opacity-90 mb-2"><i class="bi bi-envelope me-1"></i> support@quiz.edu.vn</li>
+                    <li class="small opacity-90 mb-2"><i class="bi bi-telephone me-1"></i> (84) 24 3xxx xxxx</li>
+                    <li class="small opacity-90 mb-2"><i class="bi bi-clock me-1"></i> T2-T6: 8:00-17:30</li>
                 </ul>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4 border-white" style="opacity: 0.2;">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <p class="text-muted small mb-0">
-                    © {{ date('Y') }} LOQ System. Phát triển bởi team phát triển LOQ.
+                <p class="small mb-0 opacity-75">
+                    © {{ date('Y') }} Quiz System. All rights reserved.
                 </p>
             </div>
             <div class="col-md-6 text-md-end">
-                <small class="text-muted">
+                <small class="opacity-75">
                     Phiên bản {{ config('app.version', '1.0.0') }} • 
-                    <a href="#" class="text-muted">Chính sách bảo mật</a> • 
-                    <a href="#" class="text-muted">Điều khoản sử dụng</a>
+                    <a href="#" class="text-white text-decoration-none">Chính sách bảo mật</a> • 
+                    <a href="#" class="text-white text-decoration-none">Điều khoản sử dụng</a>
                 </small>
             </div>
         </div>
     </div>
 </footer>
+
+<style>
+.hover-opacity-100:hover {
+    opacity: 1 !important;
+    transition: opacity 0.2s ease;
+}
+</style>

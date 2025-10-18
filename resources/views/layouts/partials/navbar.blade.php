@@ -1,14 +1,14 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
     <div class="container">
         <!-- Brand -->
         <a class="navbar-brand fw-bold" href="{{ url('/') }}">
             <i class="bi bi-mortarboard-fill me-2"></i>
             LOQ
-            <span class="d-none d-sm-inline text-light opacity-75 ms-1">Trắc nghiệm</span>
+            <span class="d-none d-sm-inline text-light opacity-90 ms-1">Quiz</span>
         </a>
 
         <!-- Mobile Toggle -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -18,34 +18,54 @@
             <ul class="navbar-nav me-auto">
                 @auth
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard*') ? 'active' : '' }}" 
-                           href="{{ route('dashboard') ?? '#' }}">
-                            <i class="bi bi-house-door me-1"></i>
-                            Trang chủ
-                        </a>
+                        @if(Auth::user()->isAdmin())
+                            <a class="nav-link {{ request()->routeIs('admin.dashboard*') ? 'active' : '' }}" 
+                               href="{{ route('admin.dashboard') }}">
+                                <i class="bi bi-house-door me-1"></i>
+                                Dashboard
+                            </a>
+                        @elseif(Auth::user()->isTeacher())
+                            <a class="nav-link {{ request()->routeIs('teacher.dashboard*') ? 'active' : '' }}" 
+                               href="{{ route('teacher.dashboard') }}">
+                                <i class="bi bi-house-door me-1"></i>
+                                Dashboard
+                            </a>
+                        @else
+                            <a class="nav-link {{ request()->routeIs('home*') ? 'active' : '' }}" 
+                               href="{{ route('home') }}">
+                                <i class="bi bi-house-door me-1"></i>
+                                Trang chủ
+                            </a>
+                        @endif
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-file-earmark-text me-1"></i>
-                            Quản lý đề thi
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-plus-circle me-2"></i>Tạo đề thi</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-list-ul me-2"></i>Danh sách đề thi</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Ngân hàng câu hỏi</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-graph-up me-1"></i>
-                            Báo cáo
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-bar-chart me-2"></i>Thống kê</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-people me-2"></i>Kết quả học viên</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-download me-2"></i>Xuất báo cáo</a></li>
-                        </ul>
-                    </li>
+                    @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-file-earmark-text me-1"></i>
+                                Quản lý đề thi
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-plus-circle me-2"></i>Tạo đề thi</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-list-ul me-2"></i>Danh sách đề thi</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Ngân hàng câu hỏi</a></li>
+                                @if(Auth::user()->isAdmin())
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ route('admin.categories.index') }}"><i class="bi bi-tags me-2"></i>Danh mục</a></li>
+                                @endif
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-graph-up me-1"></i>
+                                Báo cáo
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-bar-chart me-2"></i>Thống kê</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-people me-2"></i>Kết quả học viên</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-download me-2"></i>Xuất báo cáo</a></li>
+                            </ul>
+                        </li>
+                    @endif
                 @endauth
             </ul>
 

@@ -101,7 +101,7 @@ body.dashboard-page footer {
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="sidebar-brand">
-                <i class="bi bi-mortarboard-fill"></i>
+                <i class="bi bi-shield-check-fill"></i>
                 <span class="sidebar-brand-text">LOQ Admin</span>
             </div>
             <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
@@ -114,7 +114,7 @@ body.dashboard-page footer {
                 <div class="nav-section-header">Tổng quan</div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') ?? '#' }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                             <i class="bi bi-house-door"></i>
                             <span>Trang chủ</span>
                         </a>
@@ -151,7 +151,7 @@ body.dashboard-page footer {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                             <i class="bi bi-tags"></i>
                             <span>Danh mục</span>
                         </a>
@@ -228,7 +228,7 @@ body.dashboard-page footer {
                 </div>
                 <div class="user-details">
                     <div class="user-name">{{ Auth::user()->name ?? 'User' }}</div>
-                    <div class="user-role">Quản trị viên</div>
+                    <div class="user-role">{{ Auth::user()->getRoleDisplayName() ?? 'Quản trị viên' }}</div>
                 </div>
                 <div class="user-actions">
                     <div class="dropdown dropup">
