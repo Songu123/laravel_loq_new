@@ -83,7 +83,7 @@
     <div class="divider">
         <span>hoặc</span>
     </div>
-    <a href="{{ route('google.redirect') }}" class="btn btn-google">
+    <a href="{{ route('auth.google') }}" class="btn btn-google">
         <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="18" height="18">
         Đăng nhập với Google
     </a>

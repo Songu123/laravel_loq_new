@@ -388,17 +388,277 @@ let timerInterval;
 let startTime = Date.now();
 let markedQuestions = new Set();
 
+// Anti-Cheating System
+let attemptId = {{ $attempt->id ?? 'null' }};
+let examId = {{ $exam->id }};
+let violationCount = 0;
+let maxViolations = 10; // Auto-submit after 10 violations
+let isSubmitting = false; // Flag to disable violation detection when submitting
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     startTimer();
     updateProgress();
+    initializeAntiCheating();
     
     // Warn before leaving
     window.addEventListener('beforeunload', function(e) {
-        e.preventDefault();
-        e.returnValue = 'Bạn có chắc muốn rời khỏi? Tiến độ làm bài sẽ bị mất!';
+        if (!isSubmitting) {
+            e.preventDefault();
+            e.returnValue = 'Bạn có chắc muốn rời khỏi? Tiến độ làm bài sẽ bị mất!';
+        }
     });
 });
+
+// ===== ANTI-CHEATING SYSTEM =====
+
+function initializeAntiCheating() {
+    // Request fullscreen
+    requestFullscreen();
+    
+    // 1. Tab/Window Switch Detection
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !isSubmitting) {
+            logViolation('tab_switch', 'Người dùng chuyển tab/cửa sổ', 2, {
+                timestamp: new Date().toISOString(),
+                currentQuestion: currentQuestion + 1
+            });
+        }
+    });
+    
+    window.addEventListener('blur', function() {
+        // Only log if not submitting and not clicking on a button/modal
+        if (!isSubmitting) {
+            setTimeout(function() {
+                if (!document.hasFocus() && !isSubmitting) {
+                    logViolation('tab_switch', 'Cửa sổ mất focus', 2, {
+                        timestamp: new Date().toISOString(),
+                        currentQuestion: currentQuestion + 1
+                    });
+                }
+            }, 100); // Small delay to avoid false positives
+        }
+    });
+    
+    // 2. Copy/Paste/Cut Detection
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        logViolation('copy_paste', 'Cố gắng sao chép nội dung', 2, {
+            timestamp: new Date().toISOString()
+        });
+        return false;
+    });
+    
+    document.addEventListener('paste', function(e) {
+        e.preventDefault();
+        logViolation('copy_paste', 'Cố gắng dán nội dung', 2, {
+            timestamp: new Date().toISOString()
+        });
+        return false;
+    });
+    
+    document.addEventListener('cut', function(e) {
+        e.preventDefault();
+        logViolation('copy_paste', 'Cố gắng cắt nội dung', 2, {
+            timestamp: new Date().toISOString()
+        });
+        return false;
+    });
+    
+    // 3. Right Click/Context Menu Detection
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        logViolation('right_click', 'Click chuột phải', 1, {
+            timestamp: new Date().toISOString()
+        });
+        return false;
+    });
+    
+    // 4. Keyboard Shortcuts Detection
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A
+        if (e.ctrlKey && ['c', 'v', 'x', 'a'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+            logViolation('keyboard_shortcut', `Phím tắt: Ctrl+${e.key.toUpperCase()}`, 2, {
+                key: e.key,
+                timestamp: new Date().toISOString()
+            });
+            return false;
+        }
+        
+        // F12, Ctrl+Shift+I, Ctrl+Shift+J (Developer Tools)
+        if (e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase()))) {
+            e.preventDefault();
+            logViolation('keyboard_shortcut', 'Cố gắng mở Developer Tools', 3, {
+                key: e.key,
+                timestamp: new Date().toISOString()
+            });
+            return false;
+        }
+        
+        // Ctrl+U (View Source)
+        if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+            e.preventDefault();
+            logViolation('keyboard_shortcut', 'Cố gắng xem source code', 3, {
+                timestamp: new Date().toISOString()
+            });
+            return false;
+        }
+    });
+    
+    // 5. Fullscreen Exit Detection
+    document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement) {
+            logViolation('fullscreen_exit', 'Thoát chế độ toàn màn hình', 3, {
+                timestamp: new Date().toISOString()
+            });
+            // Try to re-enter fullscreen
+            setTimeout(requestFullscreen, 1000);
+        }
+    });
+    
+    // 6. Mouse Leave Detection
+    let mouseLeaveTimeout;
+    document.addEventListener('mouseleave', function() {
+        mouseLeaveTimeout = setTimeout(function() {
+            logViolation('mouse_leave', 'Chuột rời khỏi cửa sổ quá 3 giây', 1, {
+                timestamp: new Date().toISOString()
+            });
+        }, 3000);
+    });
+    
+    document.addEventListener('mouseenter', function() {
+        clearTimeout(mouseLeaveTimeout);
+    });
+    
+    // 7. Print Screen Detection (keyboard)
+    document.addEventListener('keyup', function(e) {
+        if (e.key === 'PrintScreen') {
+            logViolation('keyboard_shortcut', 'Cố gắng chụp màn hình', 3, {
+                timestamp: new Date().toISOString()
+            });
+        }
+    });
+    
+    // 8. Detect Multiple Windows/Tabs (using localStorage)
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'exam_active_' + examId) {
+            logViolation('multiple_devices', 'Phát hiện mở nhiều tab/cửa sổ', 4, {
+                timestamp: new Date().toISOString()
+            });
+            alert('⚠️ Phát hiện bạn đang mở bài thi ở nhiều tab! Bài thi sẽ bị nộp tự động.');
+            submitExam();
+        }
+    });
+    
+    // Mark this window as active
+    localStorage.setItem('exam_active_' + examId, Date.now());
+    
+    // Periodic check
+    setInterval(function() {
+        localStorage.setItem('exam_active_' + examId, Date.now());
+    }, 1000);
+    
+    // 9. Time Anomaly Detection
+    let lastActivityTime = Date.now();
+    document.addEventListener('click', function() {
+        let currentTime = Date.now();
+        let timeDiff = (currentTime - lastActivityTime) / 1000;
+        
+        // If no activity for more than 2 minutes, log it
+        if (timeDiff > 120) {
+            logViolation('time_anomaly', `Không có hoạt động trong ${Math.floor(timeDiff)} giây`, 2, {
+                inactiveSeconds: Math.floor(timeDiff),
+                timestamp: new Date().toISOString()
+            });
+        }
+        
+        lastActivityTime = currentTime;
+    });
+}
+
+function requestFullscreen() {
+    let elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => {
+            console.log('Fullscreen request failed:', err);
+        });
+    } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+    }
+}
+
+function logViolation(type, description, severity, metadata = {}) {
+    // Don't log violations if submitting
+    if (isSubmitting) {
+        return;
+    }
+    
+    violationCount++;
+    
+    // Show warning to user
+    showViolationWarning(description, violationCount);
+    
+    // Check if max violations reached
+    if (violationCount >= maxViolations) {
+        alert('⛔ Bạn đã vi phạm quá nhiều lần! Bài thi sẽ được nộp tự động.');
+        submitExam();
+        return;
+    }
+    
+    // Send to backend
+    fetch('{{ route('student.exams.log-violation') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            attempt_id: attemptId,
+            exam_id: examId,
+            violation_type: type,
+            description: description,
+            severity: severity,
+            metadata: metadata
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Violation logged:', data);
+    })
+    .catch(error => {
+        console.error('Error logging violation:', error);
+    });
+}
+
+function showViolationWarning(message, count) {
+    // Create toast notification
+    let toast = document.createElement('div');
+    toast.className = 'toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3';
+    toast.style.zIndex = '9999';
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Vi phạm #${count}:</strong> ${message}
+                <br><small>Còn ${maxViolations - count} lần trước khi nộp bài tự động!</small>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    let bsToast = new bootstrap.Toast(toast, { delay: 5000 });
+    bsToast.show();
+    
+    toast.addEventListener('hidden.bs.toast', function() {
+        toast.remove();
+    });
+}
 
 // Timer
 function startTimer() {
@@ -500,6 +760,9 @@ function confirmSubmit() {
 }
 
 function submitExam() {
+    // Disable violation detection during submission
+    isSubmitting = true;
+    
     clearInterval(timerInterval);
     
     // Calculate time spent
@@ -513,8 +776,11 @@ function submitExam() {
 }
 
 function confirmExit() {
+    isSubmitting = true; // Prevent violation logging when exiting
     if (confirm('Bạn có chắc muốn thoát? Tiến độ làm bài sẽ bị mất!')) {
         window.location.href = '{{ route('student.exams.show', $exam) }}';
+    } else {
+        isSubmitting = false; // Re-enable if user cancels
     }
 }
 </script>

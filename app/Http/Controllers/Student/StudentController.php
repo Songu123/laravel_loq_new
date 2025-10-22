@@ -19,7 +19,7 @@ class StudentController extends Controller
     {
         $userId = auth()->id();
 
-        // Statistics
+        // Basic Statistics
         $availableExams = Exam::active()->public()->count();
         $completedExams = ExamAttempt::forUser($userId)->completed()->count();
         $totalExams = Exam::active()->public()->count();
@@ -27,6 +27,34 @@ class StudentController extends Controller
         $averageScore = ExamAttempt::forUser($userId)->completed()->avg('percentage') ?? 0;
         $highestScore = ExamAttempt::forUser($userId)->completed()->max('percentage') ?? 0;
         $passedExams = ExamAttempt::forUser($userId)->passed()->count();
+        
+        // Advanced Analytics
+        // Learning Streak (consecutive days with at least 1 exam)
+        $learningStreak = $this->calculateLearningStreak($userId);
+        
+        // Today's completed exams
+        $todayExamsCompleted = ExamAttempt::forUser($userId)
+            ->whereDate('completed_at', today())
+            ->count();
+        
+        // New exams this week
+        $newExamsThisWeek = Exam::active()
+            ->public()
+            ->where('created_at', '>=', now()->startOfWeek())
+            ->count();
+        
+        // Last month average for comparison
+        $lastMonthAverage = ExamAttempt::forUser($userId)
+            ->completed()
+            ->where('completed_at', '>=', now()->subMonth())
+            ->where('completed_at', '<', now())
+            ->avg('percentage') ?? 0;
+        
+        // High score count (90+)
+        $highScoreCount = ExamAttempt::forUser($userId)
+            ->completed()
+            ->where('percentage', '>=', 90)
+            ->count();
         
         // Recent exams
         $recentExams = Exam::active()
@@ -48,16 +76,23 @@ class StudentController extends Controller
         // Categories with exam count
         $categories = Category::withCount(['exams' => function($query) {
             $query->active()->public();
-        }])->get();
+        }])
+        ->having('exams_count', '>', 0)
+        ->get();
 
-        // Ranking (optional - simplified)
-        $ranking = ExamAttempt::select('user_id', DB::raw('AVG(percentage) as avg_score'))
+        // Ranking & Percentile
+        $allUsers = ExamAttempt::select('user_id', DB::raw('AVG(percentage) as avg_score'))
             ->groupBy('user_id')
             ->orderByDesc('avg_score')
-            ->pluck('user_id')
-            ->search($userId);
+            ->pluck('user_id');
         
+        $ranking = $allUsers->search($userId);
         $ranking = $ranking !== false ? $ranking + 1 : null;
+        
+        $totalUsers = $allUsers->count();
+        $rankPercentage = $ranking && $totalUsers > 0 
+            ? round(($ranking / $totalUsers) * 100) 
+            : 0;
 
         return view('student.dashboard', compact(
             'availableExams',
@@ -69,8 +104,57 @@ class StudentController extends Controller
             'recentExams',
             'recentResults',
             'categories',
-            'ranking'
+            'ranking',
+            'learningStreak',
+            'todayExamsCompleted',
+            'newExamsThisWeek',
+            'lastMonthAverage',
+            'highScoreCount',
+            'rankPercentage'
         ));
+    }
+    
+    /**
+     * Calculate learning streak (consecutive days with exams)
+     */
+    private function calculateLearningStreak($userId)
+    {
+        $attempts = ExamAttempt::forUser($userId)
+            ->completed()
+            ->orderByDesc('completed_at')
+            ->pluck('completed_at')
+            ->map(function($date) {
+                return $date->format('Y-m-d');
+            })
+            ->unique()
+            ->values();
+
+        if ($attempts->isEmpty()) {
+            return 0;
+        }
+
+        $streak = 0;
+        $currentDate = today();
+
+        // Check if there's activity today or yesterday
+        if (!$attempts->contains($currentDate->format('Y-m-d')) && 
+            !$attempts->contains($currentDate->copy()->subDay()->format('Y-m-d'))) {
+            return 0;
+        }
+
+        foreach ($attempts as $date) {
+            if ($date == $currentDate->format('Y-m-d')) {
+                $streak++;
+                $currentDate = $currentDate->subDay();
+            } elseif ($date == $currentDate->format('Y-m-d')) {
+                $streak++;
+                $currentDate = $currentDate->subDay();
+            } else {
+                break;
+            }
+        }
+
+        return $streak;
     }
 
     /**

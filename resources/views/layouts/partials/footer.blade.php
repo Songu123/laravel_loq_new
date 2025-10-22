@@ -1,4 +1,4 @@
-<footer class="mt-auto py-4 text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+<footer class="mt-auto py-4 text-white bg-dark">
     <div class="container">
         <div class="row">
             <div class="col-md-6">

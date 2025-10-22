@@ -25,99 +25,69 @@
             min-height: 100vh;
         }
         
-        /* Sidebar */
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(99, 102, 241, 0.25);
+        /* Top Navbar */
+        .top-navbar {
+            background: #0d6efd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             position: fixed;
             top: 0;
             left: 0;
-            width: 250px;
+            right: 0;
             z-index: 1000;
+            height: 70px;
         }
         
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 0.75rem 1rem;
+        .top-navbar .brand {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            transition: all 0.3s;
-            border-left: 3px solid transparent;
+            gap: 0.5rem;
         }
         
-        .sidebar .nav-link:hover {
+        .top-navbar .brand:hover {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .top-navbar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            border-radius: 0.35rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .top-navbar .nav-link:hover {
             color: #fff;
             background-color: rgba(255, 255, 255, 0.1);
-            border-left-color: #fff;
         }
         
-        .sidebar .nav-link.active {
+        .top-navbar .nav-link.active {
             color: #fff;
-            background-color: rgba(255, 255, 255, 0.15);
-            border-left-color: #fff;
-            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.2);
         }
         
-        .sidebar .nav-link i {
-            margin-right: 0.5rem;
+        .top-navbar .nav-link i {
             font-size: 1.1rem;
-        }
-        
-        /* Main Content */
-        .main-content {
-            margin-left: 250px;
-            padding: 2rem;
-        }
-        
-        /* Topbar */
-        .topbar {
-            background: #fff;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-            padding: 1rem 1.5rem;
-            margin: -2rem -2rem 2rem -2rem;
-            border-radius: 0.35rem;
-        }
-        
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
-        }
-        
-        .card-header {
-            background-color: #f8f9fc;
-            border-bottom: 1px solid #e3e6f0;
-            padding: 0.75rem 1.25rem;
-            font-weight: 600;
-            color: #4e73df;
-        }
-        
-        /* Stats Cards */
-        .stat-card {
-            transition: transform 0.3s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        /* Buttons */
-        .btn {
-            border-radius: 0.35rem;
-            font-weight: 500;
-        }
-        
-        /* Badge */
-        .badge {
-            padding: 0.35rem 0.65rem;
-            font-weight: 500;
         }
         
         /* User Dropdown */
         .user-dropdown {
             cursor: pointer;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.35rem;
+            transition: background 0.3s;
+        }
+        
+        .user-dropdown:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         
         .user-avatar {
@@ -127,25 +97,256 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #0a58ca;
             color: white;
             font-weight: 600;
             font-size: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Notification Badge */
+        .notification-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.35rem;
+            position: relative;
+            transition: background 0.3s;
+        }
+        
+        .notification-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .notification-btn i {
+            font-size: 1.25rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: 70px;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: #6c757d;
+        }
+        
+        .breadcrumb-item a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item a:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            transition: box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background-color: #fff;
+            border-bottom: 2px solid #0d6efd;
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+        
+        .stat-icon.primary {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+        }
+        
+        .stat-icon.success {
+            background-color: #d1f4e5;
+            color: #198754;
+        }
+        
+        .stat-icon.warning {
+            background-color: #fff3cd;
+            color: #ffc107;
+        }
+        
+        .stat-icon.info {
+            background-color: #cfe2ff;
+            color: #0dcaf0;
+        }
+        
+        /* Buttons */
+        .btn {
+            border-radius: 0.35rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+        }
+        
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0a58ca;
+            border-color: #0a58ca;
+        }
+        
+        /* Badge */
+        .badge {
+            padding: 0.35rem 0.65rem;
+            font-weight: 500;
+            border-radius: 0.25rem;
+        }
+        
+        /* Dropdown Menu */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            transition: background 0.3s;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fc;
+            color: #0d6efd;
+        }
+        
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .mobile-nav {
+            display: none;
         }
         
         /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 0;
-                overflow: hidden;
+        @media (max-width: 991px) {
+            .mobile-menu-toggle {
+                display: block;
             }
             
-            .sidebar.show {
-                width: 250px;
+            .desktop-nav {
+                display: none;
+            }
+            
+            .mobile-nav {
+                display: block;
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 280px;
+                height: calc(100vh - 70px);
+                background: white;
+                box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+                transition: left 0.3s;
+                overflow-y: auto;
+                z-index: 999;
+            }
+            
+            .mobile-nav.show {
+                left: 0;
+            }
+            
+            .mobile-nav .nav-link {
+                color: #495057;
+                padding: 1rem 1.5rem;
+                border-left: 3px solid transparent;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                text-decoration: none;
+                transition: all 0.3s;
+            }
+            
+            .mobile-nav .nav-link:hover {
+                background-color: #f8f9fc;
+                border-left-color: #0d6efd;
+                color: #0d6efd;
+            }
+            
+            .mobile-nav .nav-link.active {
+                background-color: #e7f1ff;
+                border-left-color: #0d6efd;
+                color: #0d6efd;
+                font-weight: 600;
             }
             
             .main-content {
-                margin-left: 0;
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .top-navbar {
+                height: 60px;
+            }
+            
+            .main-content {
+                margin-top: 60px;
+                padding: 0.75rem;
+            }
+            
+            .mobile-nav {
+                top: 60px;
+                height: calc(100vh - 60px);
             }
         }
     </style>
@@ -153,73 +354,114 @@
     @stack('styles')
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="p-4 text-center border-bottom border-white border-opacity-25">
-            <h4 class="text-white mb-0">
-                <i class="bi bi-mortarboard-fill"></i> Student Portal
-            </h4>
-            <p class="text-white-50 small mb-0">Hệ thống thi trắc nghiệm</p>
-        </div>
-        
-        <nav class="nav flex-column p-3">
-            <a class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}" 
-               href="{{ route('student.dashboard') }}">
-                <i class="bi bi-house-door"></i> Dashboard
-            </a>
-            
-            <a class="nav-link {{ request()->routeIs('student.exams.*') ? 'active' : '' }}" 
-               href="{{ route('student.exams.index') }}">
-                <i class="bi bi-file-earmark-text"></i> Đề thi
-            </a>
-            
-            <a class="nav-link {{ request()->routeIs('student.history') ? 'active' : '' }}"
-               href="{{ route('student.history') }}">
-                <i class="bi bi-clock-history"></i> Lịch sử thi & Kết quả
-            </a>            <hr class="border-white border-opacity-25 my-3">
-            
-            <a class="nav-link" href="#">
-                <i class="bi bi-person"></i> Hồ sơ
-            </a>
-            
-            <a class="nav-link" href="#">
-                <i class="bi bi-gear"></i> Cài đặt
-            </a>
-            
-            <a class="nav-link text-danger" href="#" 
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="bi bi-box-arrow-right"></i> Đăng xuất
-            </a>
-        </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Topbar -->
-        <div class="topbar">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    @yield('breadcrumb')
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="container-fluid px-4">
+            <div class="d-flex justify-content-between align-items-center h-100">
+                <!-- Brand & Menu -->
+                <div class="d-flex align-items-center gap-3">
+                    <button class="mobile-menu-toggle" onclick="toggleMobileNav()">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    
+                    <a href="{{ route('student.dashboard') }}" class="brand">
+                        <i class="bi bi-mortarboard-fill"></i>
+                        <span>Student Portal</span>
+                    </a>
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="desktop-nav d-none d-lg-flex gap-2 ms-4">
+                        <a class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}" 
+                           href="{{ route('student.dashboard') }}">
+                            <i class="bi bi-house-door"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        
+                        <a class="nav-link {{ request()->routeIs('student.exams.*') ? 'active' : '' }}" 
+                           href="{{ route('student.exams.index') }}">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>Đề thi</span>
+                        </a>
+                        
+                        <a class="nav-link {{ request()->routeIs('student.practice.*') ? 'active' : '' }}"
+                           href="{{ route('student.practice.index') }}">
+                            <i class="bi bi-trophy"></i>
+                            <span>Luyện tập</span>
+                        </a>
+                        
+                        <a class="nav-link {{ request()->routeIs('student.history') ? 'active' : '' }}"
+                           href="{{ route('student.history') }}">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Lịch sử & Kết quả</span>
+                        </a>
+                    </div>
                 </div>
                 
-                <div class="d-flex align-items-center gap-3">
+                <!-- Right Side -->
+                <div class="d-flex align-items-center gap-2">
                     <!-- Notifications -->
                     <div class="dropdown">
-                        <button class="btn btn-light position-relative" type="button" 
+                        <button class="notification-btn" type="button" 
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-bell"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                                  style="font-size: 0.65rem;">
                                 3
                             </span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><h6 class="dropdown-header">Thông báo</h6></li>
-                            <li><a class="dropdown-item" href="#">
-                                <small class="text-muted">5 phút trước</small><br>
-                                Đề thi mới: Laravel Basics
-                            </a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" style="min-width: 320px;">
+                            <li>
+                                <h6 class="dropdown-header d-flex justify-content-between align-items-center">
+                                    <span>Thông báo</span>
+                                    <span class="badge bg-primary rounded-pill">3</span>
+                                </h6>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-center small" href="#">Xem tất cả</a></li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="bi bi-file-earmark-plus text-primary"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="small fw-semibold">Đề thi mới: Laravel Basics</div>
+                                            <div class="text-muted small">5 phút trước</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="bi bi-check-circle text-success"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="small fw-semibold">Kết quả đã có: PHP OOP</div>
+                                            <div class="text-muted small">1 giờ trước</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="bi bi-trophy text-warning"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="small fw-semibold">Bạn đạt điểm cao nhất!</div>
+                                            <div class="text-muted small">2 giờ trước</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-center small text-primary fw-semibold" href="#">
+                                    Xem tất cả thông báo
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     
@@ -230,24 +472,40 @@
                             <div class="user-avatar me-2">
                                 {{ substr(auth()->user()->name, 0, 1) }}
                             </div>
-                            <div class="d-none d-md-block">
-                                <div class="fw-semibold">{{ auth()->user()->name }}</div>
-                                <small class="text-muted">Sinh viên</small>
+                            <div class="d-none d-md-block me-2">
+                                <div class="fw-semibold" style="font-size: 0.9rem;">{{ auth()->user()->name }}</div>
+                                <small style="font-size: 0.75rem; opacity: 0.85;">Sinh viên</small>
                             </div>
-                            <i class="bi bi-chevron-down ms-2"></i>
+                            <i class="bi bi-chevron-down"></i>
                         </div>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">
-                                <i class="bi bi-person me-2"></i>Hồ sơ
-                            </a></li>
-                            <li><a class="dropdown-item" href="#">
-                                <i class="bi bi-gear me-2"></i>Cài đặt
-                            </a></li>
+                            <li>
+                                <div class="dropdown-header">
+                                    <div class="fw-bold">{{ auth()->user()->name }}</div>
+                                    <small class="text-muted">{{ auth()->user()->email }}</small>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person"></i>Hồ sơ cá nhân
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-gear"></i>Cài đặt
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-question-circle"></i>Trợ giúp
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="#"
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                                    <i class="bi bi-box-arrow-right"></i>Đăng xuất
                                 </a>
                             </li>
                         </ul>
@@ -255,8 +513,62 @@
                 </div>
             </div>
         </div>
+    </nav>
 
-        <!-- Page Content -->
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="p-3 border-bottom">
+            <div class="fw-bold text-primary">Menu chính</div>
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}" 
+               href="{{ route('student.dashboard') }}">
+                <i class="bi bi-house-door"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a class="nav-link {{ request()->routeIs('student.exams.*') ? 'active' : '' }}" 
+               href="{{ route('student.exams.index') }}">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Đề thi</span>
+            </a>
+            
+            <a class="nav-link {{ request()->routeIs('student.practice.*') ? 'active' : '' }}"
+               href="{{ route('student.practice.index') }}">
+                <i class="bi bi-trophy"></i>
+                <span>Luyện tập</span>
+            </a>
+            
+            <a class="nav-link {{ request()->routeIs('student.history') ? 'active' : '' }}"
+               href="{{ route('student.history') }}">
+                <i class="bi bi-clock-history"></i>
+                <span>Lịch sử & Kết quả</span>
+            </a>
+            
+            <hr class="my-2 mx-3">
+            
+            <a class="nav-link" href="#">
+                <i class="bi bi-person"></i>
+                <span>Hồ sơ cá nhân</span>
+            </a>
+            
+            <a class="nav-link" href="#">
+                <i class="bi bi-gear"></i>
+                <span>Cài đặt</span>
+            </a>
+            
+            <a class="nav-link text-danger" href="#" 
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        @yield('breadcrumb')
+        
         @yield('student-dashboard-content')
     </div>
 
@@ -331,10 +643,30 @@
     
     <!-- Custom Scripts -->
     <script>
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
+        // Mobile nav toggle
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('show');
         }
+        
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileNav = document.getElementById('mobileNav');
+            const toggleBtn = document.querySelector('.mobile-menu-toggle');
+            
+            if (mobileNav && mobileNav.classList.contains('show')) {
+                if (!mobileNav.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    mobileNav.classList.remove('show');
+                }
+            }
+        });
+        
+        // Close mobile nav when link is clicked
+        document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobileNav').classList.remove('show');
+            });
+        });
         
         // Auto-hide toasts
         document.addEventListener('DOMContentLoaded', function() {

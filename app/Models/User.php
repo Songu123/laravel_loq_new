@@ -24,6 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail // ✅ Thêm imple
         'password',
         'provider',
         'provider_id',
+        'google_id',
+        'facebook_id',
         'role',
         'student_id',
         'phone',

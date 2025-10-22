@@ -4,8 +4,127 @@
 
 @push('styles')
 <style>
+    /* Hero Banner with Image */
+    .hero-banner {
+        position: relative;
+        background: linear-gradient(135deg, rgba(13, 110, 253, 0.9) 0%, rgba(108, 117, 125, 0.9) 100%),
+                    url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&h=600&fit=crop') center/cover;
+        color: white;
+        padding: 5rem 0;
+        margin-bottom: 3rem;
+        overflow: hidden;
+    }
+    
+    .hero-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 1s ease-out;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.95;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        margin-bottom: 2rem;
+        animation: fadeInUp 1s ease-out 0.2s both;
+    }
+    
+    .hero-features {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        animation: fadeInUp 1s ease-out 0.4s both;
+    }
+    
+    .hero-feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .hero-feature-item i {
+        font-size: 1.5rem;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .hero-image-wrapper {
+        position: relative;
+        animation: fadeInRight 1s ease-out 0.3s both;
+    }
+    
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .floating-badge {
+        position: absolute;
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .floating-badge-1 {
+        top: 20%;
+        right: -10%;
+        animation-delay: 0s;
+    }
+    
+    .floating-badge-2 {
+        bottom: 20%;
+        right: 0;
+        animation-delay: 1s;
+    }
+    
     .hero-section {
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        background: #0d6efd;
         color: white;
         padding: 4rem 0;
         margin-bottom: 3rem;
@@ -44,9 +163,9 @@
     }
     
     .exam-header {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        background: #f8f9fa;
         padding: 1.5rem;
-        border-bottom: 2px solid #e2e8f0;
+        border-bottom: 2px solid #e9ecef;
     }
     
     .exam-badge {
@@ -82,7 +201,7 @@
     }
     
     .cta-button {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        background: #0d6efd;
         border: none;
         color: white;
         padding: 0.75rem 2rem;
@@ -92,8 +211,9 @@
     }
     
     .cta-button:hover {
+        background: #0a58ca;
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        box-shadow: 0 8px 16px rgba(13, 110, 253, 0.3);
         color: white;
     }
     
@@ -116,8 +236,105 @@
 @endpush
 
 @section('content')
-<!-- Hero Section -->
-<div class="hero-section">
+<!-- Hero Banner with Image -->
+<div class="hero-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="bi bi-mortarboard-fill me-3"></i>
+                        Hệ Thống Thi Trắc Nghiệm
+                    </h1>
+                    <p class="hero-subtitle">
+                        Nền tảng thi trực tuyến hiện đại, giúp bạn học tập hiệu quả và đạt kết quả cao nhất. 
+                        Hơn 10,000+ học viên tin tưởng sử dụng!
+                    </p>
+                    
+                    @guest
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="{{ route('login') }}" class="btn btn-light btn-lg px-4">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                Đăng nhập ngay
+                            </a>
+                            <a href="{{ route('register') }}" class="btn btn-outline-light btn-lg px-4">
+                                <i class="bi bi-person-plus me-2"></i>
+                                Đăng ký miễn phí
+                            </a>
+                        </div>
+                    @else
+                        <div class="d-flex gap-3 flex-wrap">
+                            @if(Auth::user()->isStudent())
+                                <a href="{{ route('student.dashboard') }}" class="btn btn-light btn-lg px-4">
+                                    <i class="bi bi-speedometer2 me-2"></i>
+                                    Dashboard của tôi
+                                </a>
+                            @elseif(Auth::user()->isTeacher())
+                                <a href="{{ route('teacher.dashboard') }}" class="btn btn-light btn-lg px-4">
+                                    <i class="bi bi-speedometer2 me-2"></i>
+                                    Dashboard Giáo viên
+                                </a>
+                            @else
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-light btn-lg px-4">
+                                    <i class="bi bi-speedometer2 me-2"></i>
+                                    Dashboard Admin
+                                </a>
+                            @endif
+                        </div>
+                    @endguest
+                    
+                    <div class="hero-features">
+                        <div class="hero-feature-item">
+                            <i class="bi bi-shield-check"></i>
+                            <span>Bảo mật cao</span>
+                        </div>
+                        <div class="hero-feature-item">
+                            <i class="bi bi-lightning-charge"></i>
+                            <span>Thi nhanh chóng</span>
+                        </div>
+                        <div class="hero-feature-item">
+                            <i class="bi bi-graph-up"></i>
+                            <span>Theo dõi tiến độ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&h=500&fit=crop" 
+                         alt="Online Learning" 
+                         class="img-fluid rounded-4 shadow-lg"
+                         style="border: 5px solid rgba(255,255,255,0.2);">
+                    
+                    <!-- Floating Badges -->
+                    <div class="floating-badge floating-badge-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-success fs-3"></i>
+                            <div>
+                                <div class="fw-bold text-dark">1,200+</div>
+                                <small class="text-muted">Đề thi</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="floating-badge floating-badge-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-trophy-fill text-warning fs-3"></i>
+                            <div>
+                                <div class="fw-bold text-dark">98%</div>
+                                <small class="text-muted">Hài lòng</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Old Hero Section - Now simplified or can be removed -->
+<div class="hero-section d-none">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">

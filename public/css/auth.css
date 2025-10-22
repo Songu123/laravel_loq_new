@@ -1,14 +1,12 @@
 /* Auth Layout Styles for LOQ System */
 :root {
-    --auth-primary: #6366f1;
-    --auth-primary-dark: #4f46e5;
-    --auth-accent: #8b5cf6;
+    --auth-primary: #0d6efd;
+    --auth-primary-dark: #0a58ca;
+    --auth-accent: #6c757d;
     --auth-text-light: #f8fafc;
     --auth-text-muted: #94a3b8;
     --auth-bg: #0f172a;
     --auth-card-bg: #ffffff;
-    --auth-gradient-start: #6366f1;
-    --auth-gradient-end: #8b5cf6;
 }
 
 /* Auth Container */
@@ -24,7 +22,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.95) 0%, rgba(108, 117, 125, 0.95) 100%),
+                url('https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1920&h=1080&fit=crop') center/cover;
     z-index: 1;
 }
 
@@ -37,7 +36,7 @@
 .shape {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
     animation: float 6s ease-in-out infinite;
     backdrop-filter: blur(10px);
 }
@@ -206,7 +205,7 @@
 
 .auth-form-container .form-control:focus {
     border-color: var(--auth-primary);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
 }
 
 .auth-form-container .form-control.is-invalid {
@@ -214,7 +213,7 @@
 }
 
 .auth-form-container .btn-primary {
-    background: linear-gradient(135deg, var(--auth-primary), var(--auth-accent));
+    background: var(--auth-primary);
     border: none;
     border-radius: 12px;
     padding: 0.875rem 1.5rem;
@@ -225,8 +224,9 @@
 }
 
 .auth-form-container .btn-primary:hover {
+    background: var(--auth-primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 10px 25px rgba(13, 110, 253, 0.3);
 }
 
 .form-error {

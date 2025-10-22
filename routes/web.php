@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -66,6 +67,17 @@ Route::get('/contact', [\App\Http\Controllers\HomeController::class, 'contact'])
 // logout
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
+// Social Authentication Routes (Google, Facebook)
+Route::middleware('guest')->group(function () {
+    // Google OAuth
+    Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+    
+    // Facebook OAuth (optional - for future)
+    Route::get('auth/facebook', [SocialAuthController::class, 'redirectToFacebook'])->name('auth.facebook');
+    Route::get('auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback'])->name('auth.facebook.callback');
+});
+
 // Email verification routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', function () {
@@ -115,6 +127,14 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         ->name('exams.toggle-status');
     Route::post('exams/{exam}/duplicate', [\App\Http\Controllers\Teacher\ExamController::class, 'duplicate'])
         ->name('exams.duplicate');
+    
+    // Violation Management
+    Route::get('/violations/flagged', [\App\Http\Controllers\ViolationAnalysisController::class, 'flaggedAttempts'])
+        ->name('violations.flagged');
+    Route::get('/violations/report/{attempt}', [\App\Http\Controllers\ViolationAnalysisController::class, 'violationReport'])
+        ->name('violations.report');
+    Route::get('/violations/analysis', [\App\Http\Controllers\ViolationAnalysisController::class, 'analyzePattern'])
+        ->name('violations.analysis');
 });
 
 // Student routes
@@ -128,9 +148,21 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::get('/exams/{exam}/take', [\App\Http\Controllers\Student\StudentController::class, 'take'])->name('exams.take');
     Route::post('/exams/{exam}/submit', [\App\Http\Controllers\Student\StudentController::class, 'submit'])->name('exams.submit');
     
+    // Anti-Cheating - Violation Logging
+    Route::post('/exams/log-violation', [\App\Http\Controllers\ViolationAnalysisController::class, 'logViolation'])
+        ->name('exams.log-violation');
+    Route::get('/violations/{attempt}', [\App\Http\Controllers\ViolationAnalysisController::class, 'getAttemptViolations'])
+        ->name('violations.attempt');
+    
     // History & Results
     Route::get('/history', [\App\Http\Controllers\Student\StudentController::class, 'history'])->name('history');
     Route::get('/results/{attempt}', [\App\Http\Controllers\Student\StudentController::class, 'resultDetail'])->name('results.show');
+    
+    // Practice System
+    Route::get('/practice', [\App\Http\Controllers\Student\PracticeController::class, 'index'])->name('practice.index');
+    Route::get('/practice/wrong-answers', [\App\Http\Controllers\Student\PracticeController::class, 'wrongAnswers'])->name('practice.wrong-answers');
+    Route::get('/practice/start', [\App\Http\Controllers\Student\PracticeController::class, 'startPractice'])->name('practice.start');
+    Route::post('/practice/submit', [\App\Http\Controllers\Student\PracticeController::class, 'submitPractice'])->name('practice.submit');
 });
 
 
@@ -140,7 +172,3 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return redirect()->route('admin.dashboard');
     });
 });
-
-
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
