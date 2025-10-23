@@ -83,6 +83,12 @@ class Exam extends Model
         return $this->hasMany(ExamAttempt::class);
     }
 
+    public function classes()
+    {
+        return $this->belongsToMany(\App\Models\ClassRoom::class, 'class_exam', 'exam_id', 'class_id')
+            ->withTimestamps();
+    }
+
     // Scopes
     public function scopeActive($query)
     {
@@ -158,5 +164,28 @@ class Exam extends Model
         }
         
         return $this->is_active;
+    }
+
+    /**
+     * Eligible students for this exam: all students in attached classes.
+     * If no classes are attached and exam is public, fall back to all active students.
+     */
+    public function eligibleStudents()
+    {
+        $classIds = $this->classes()->pluck('classes.id');
+        if ($classIds->isNotEmpty()) {
+            return \App\Models\User::query()
+                ->where('role', 'student')
+                ->whereHas('joinedClasses', function ($q) use ($classIds) {
+                    $q->whereIn('classes.id', $classIds);
+                });
+        }
+
+        if ($this->is_public) {
+            return \App\Models\User::query()->where('role', 'student');
+        }
+
+        // No classes and not public -> no eligible students
+        return \App\Models\User::query()->whereRaw('1=0');
     }
 }

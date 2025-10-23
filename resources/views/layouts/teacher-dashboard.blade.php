@@ -186,9 +186,9 @@ body.teacher-dashboard-page footer {
                 <div class="nav-section-header">Lớp học</div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('teacher.classes.index') }}" class="nav-link {{ request()->routeIs('teacher.classes.*') ? 'active' : '' }}">
                             <i class="bi bi-people"></i>
-                            <span>Học sinh của tôi</span>
+                            <span>Lớp học</span>
                         </a>
                     </li>
                     <li class="nav-item">
