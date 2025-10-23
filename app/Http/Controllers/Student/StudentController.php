@@ -9,6 +9,7 @@ use App\Models\ExamAttemptAnswer;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class StudentController extends Controller
 {
@@ -306,6 +307,35 @@ class StudentController extends Controller
             $attempt->calculateScore();
 
             DB::commit();
+
+            // Notify student (and optionally teacher) that the exam is completed
+            try {
+                $user = auth()->user();
+                // Send notification to student
+                Notification::send($user, new \App\Notifications\ExamCompletedNotification(
+                    attemptId: $attempt->id,
+                    examId: $exam->id,
+                    examTitle: $exam->title ?? ('Exam #'.$exam->id),
+                    correctAnswers: (int) $attempt->correct_answers,
+                    totalQuestions: (int) $attempt->total_questions,
+                    percentage: (float) $attempt->percentage,
+                ));
+
+                // Optionally notify exam creator/teacher
+                if ($exam->creator && $exam->creator->id !== $user->id) {
+                    Notification::send($exam->creator, new \App\Notifications\ExamCompletedNotification(
+                        attemptId: $attempt->id,
+                        examId: $exam->id,
+                        examTitle: $exam->title ?? ('Exam #'.$exam->id),
+                        correctAnswers: (int) $attempt->correct_answers,
+                        totalQuestions: (int) $attempt->total_questions,
+                        percentage: (float) $attempt->percentage,
+                    ));
+                }
+            } catch (\Throwable $notifyError) {
+                // Avoid breaking the user flow if notification fails; log only
+                report($notifyError);
+            }
 
             // Flash detailed result info
             $resultMessage = sprintf(

@@ -163,4 +163,21 @@ class User extends Authenticatable implements MustVerifyEmail // ✅ Thêm imple
     {
         return $this->hasMany(ExamAttempt::class);
     }
+
+    /**
+     * Classes this user teaches (for teachers)
+     */
+    public function taughtClasses()
+    {
+        return $this->hasMany(\App\Models\ClassRoom::class, 'teacher_id');
+    }
+
+    /**
+     * Classes this user joined (for students)
+     */
+    public function joinedClasses()
+    {
+        return $this->belongsToMany(\App\Models\ClassRoom::class, 'class_user', 'user_id', 'class_id')
+            ->withTimestamps();
+    }
 }

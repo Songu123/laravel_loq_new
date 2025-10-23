@@ -248,7 +248,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="questionsContainer">
+                        <div id="questionsContainer" data-count="{{ $exam->questions->count() }}">
                             @foreach($exam->questions as $index => $question)
                                 <div class="question-item card mb-3" data-question-index="{{ $index }}">
                                     <div class="card-header bg-light">
@@ -267,6 +267,7 @@
                                                       name="questions[{{ $index }}][question_text]" 
                                                       rows="2" 
                                                       required>{{ old("questions.{$index}.question_text", $question->question_text) }}</textarea>
+                                            <input type="hidden" name="questions[{{ $index }}][id]" value="{{ $question->id }}">
                                         </div>
 
                                         <div class="row">
@@ -318,10 +319,13 @@
                                             </div>
                                             <div class="answers-container">
                                                 @if($question->question_type === 'true_false')
-                                                    <!-- True/False answers -->
                                                     @php
-                                                        $trueAnswer = $question->answers->where('answer_text', 'Đúng')->first();
-                                                        $falseAnswer = $question->answers->where('answer_text', 'Sai')->first();
+                                                        $answersTF = $question->answers->values();
+                                                        $selectedIndex = old("questions.$index.correct_answer");
+                                                        if ($selectedIndex === null) {
+                                                            $selectedIndex = $answersTF->search(function($a){ return $a->is_correct; });
+                                                            if ($selectedIndex === false) $selectedIndex = 0;
+                                                        }
                                                     @endphp
                                                     <div class="answer-item d-flex align-items-center mb-2">
                                                         <div class="form-check me-3">
@@ -329,13 +333,16 @@
                                                                    type="radio" 
                                                                    name="questions[{{ $index }}][correct_answer]" 
                                                                    value="0" 
-                                                                   {{ ($trueAnswer && $trueAnswer->is_correct) ? 'checked' : '' }}>
+                                                                   {{ (int)$selectedIndex === 0 ? 'checked' : '' }}>
                                                         </div>
                                                         <input type="text" 
                                                                class="form-control" 
                                                                name="questions[{{ $index }}][answers][0][answer_text]" 
-                                                               value="Đúng" 
+                                                               value="{{ old("questions.$index.answers.0.answer_text", $answersTF[0]->answer_text ?? 'Đúng') }}" 
                                                                readonly>
+                                                        @if(isset($answersTF[0]))
+                                                            <input type="hidden" name="questions[{{ $index }}][answers][0][id]" value="{{ $answersTF[0]->id }}">
+                                                        @endif
                                                     </div>
                                                     <div class="answer-item d-flex align-items-center mb-2">
                                                         <div class="form-check me-3">
@@ -343,16 +350,26 @@
                                                                    type="radio" 
                                                                    name="questions[{{ $index }}][correct_answer]" 
                                                                    value="1" 
-                                                                   {{ ($falseAnswer && $falseAnswer->is_correct) ? 'checked' : '' }}>
+                                                                   {{ (int)$selectedIndex === 1 ? 'checked' : '' }}>
                                                         </div>
                                                         <input type="text" 
                                                                class="form-control" 
                                                                name="questions[{{ $index }}][answers][1][answer_text]" 
-                                                               value="Sai" 
+                                                               value="{{ old("questions.$index.answers.1.answer_text", $answersTF[1]->answer_text ?? 'Sai') }}" 
                                                                readonly>
+                                                        @if(isset($answersTF[1]))
+                                                            <input type="hidden" name="questions[{{ $index }}][answers][1][id]" value="{{ $answersTF[1]->id }}">
+                                                        @endif
                                                     </div>
                                                 @else
                                                     <!-- Multiple choice answers -->
+                                                    @php
+                                                        $selectedIndex = old("questions.$index.correct_answer");
+                                                        if ($selectedIndex === null) {
+                                                            $selectedIndex = $question->answers->search(function($a){ return $a->is_correct; });
+                                                            if ($selectedIndex === false) $selectedIndex = 0;
+                                                        }
+                                                    @endphp
                                                     @foreach($question->answers as $answerIndex => $answer)
                                                         <div class="answer-item d-flex align-items-center mb-2">
                                                             <div class="form-check me-3">
@@ -360,13 +377,14 @@
                                                                        type="radio" 
                                                                        name="questions[{{ $index }}][correct_answer]" 
                                                                        value="{{ $answerIndex }}" 
-                                                                       {{ $answer->is_correct ? 'checked' : '' }}>
+                                                                       {{ (int)$selectedIndex === (int)$answerIndex ? 'checked' : '' }}>
                                                             </div>
                                                             <input type="text" 
                                                                    class="form-control me-2" 
                                                                    name="questions[{{ $index }}][answers][{{ $answerIndex }}][answer_text]" 
                                                                    value="{{ old("questions.{$index}.answers.{$answerIndex}.answer_text", $answer->answer_text) }}" 
                                                                    placeholder="Nhập đáp án">
+                                                            <input type="hidden" name="questions[{{ $index }}][answers][{{ $answerIndex }}][id]" value="{{ $answer->id }}">
                                                             <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeAnswer(this)">
                                                                 <i class="bi bi-trash"></i>
                                                             </button>
@@ -482,7 +500,7 @@
 
 @push('scripts')
 <script>
-let questionIndex = {{ $exam->questions->count() }};
+let questionIndex = parseInt(document.getElementById('questionsContainer').getAttribute('data-count') || '0', 10);
 
 function addQuestion() {
     const template = document.getElementById('questionTemplate');

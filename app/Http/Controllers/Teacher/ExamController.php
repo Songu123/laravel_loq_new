@@ -241,6 +241,7 @@ class ExamController extends Controller
                 'category_id' => $validated['category_id'],
                 'duration_minutes' => $validated['duration_minutes'],
                 'difficulty_level' => $validated['difficulty_level'],
+                'is_active' => $request->boolean('is_active', $exam->is_active),
                 'is_public' => $request->boolean('is_public'),
                 'start_time' => $validated['start_time'],
                 'end_time' => $validated['end_time'],
@@ -280,6 +281,10 @@ class ExamController extends Controller
                 if (isset($questionData['answers']) && is_array($questionData['answers'])) {
                     $existingAnswerIds = $question->answers->pluck('id')->toArray();
                     $submittedAnswerIds = [];
+                    // Determine correct answer index if provided via radios (legacy edit view)
+                    $correctIndex = isset($questionData['correct_answer'])
+                        ? (int) $questionData['correct_answer']
+                        : null;
 
                     foreach ($questionData['answers'] as $answerIndex => $answerData) {
                         if (!empty($answerData['answer_text'])) {
@@ -293,9 +298,17 @@ class ExamController extends Controller
                                 $answer->question_id = $question->id;
                             }
 
+                            // Determine correctness: prefer explicit is_correct checkbox; fallback to correct_answer index (radio)
+                            $isCorrect = false;
+                            if (array_key_exists('is_correct', $answerData)) {
+                                $isCorrect = (bool) $answerData['is_correct'];
+                            } elseif ($correctIndex !== null && $correctIndex === (int) $answerIndex) {
+                                $isCorrect = true;
+                            }
+
                             $answer->fill([
                                 'answer_text' => $answerData['answer_text'],
-                                'is_correct' => $answerData['is_correct'] ?? false,
+                                'is_correct' => $isCorrect,
                                 'order' => $answerIndex + 1,
                             ]);
                             $answer->save();

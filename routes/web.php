@@ -135,6 +135,22 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         ->name('violations.report');
     Route::get('/violations/analysis', [\App\Http\Controllers\ViolationAnalysisController::class, 'analyzePattern'])
         ->name('violations.analysis');
+    // Classes for teachers
+    Route::resource('classes', \App\Http\Controllers\Teacher\ClassController::class)->only(['index','create','store','show']);
+    Route::post('classes/{class}/regenerate-code', [\App\Http\Controllers\Teacher\ClassController::class, 'regenerateCode'])
+        ->name('classes.regenerate-code');
+    Route::post('classes/{class}/toggle-approval', [\App\Http\Controllers\Teacher\ClassController::class, 'toggleApproval'])
+        ->name('classes.toggle-approval');
+    Route::post('classes/{class}/requests/{requestItem}/approve', [\App\Http\Controllers\Teacher\ClassController::class, 'approveRequest'])
+        ->name('classes.requests.approve');
+    Route::post('classes/{class}/requests/{requestItem}/reject', [\App\Http\Controllers\Teacher\ClassController::class, 'rejectRequest'])
+        ->name('classes.requests.reject');
+    Route::post('classes/{class}/remove-student', [\App\Http\Controllers\Teacher\ClassController::class, 'removeStudent'])
+        ->name('classes.remove-student');
+    Route::post('classes/{class}/attach-exam', [\App\Http\Controllers\Teacher\ClassController::class, 'attachExam'])
+        ->name('classes.attach-exam');
+    Route::post('classes/{class}/detach-exam', [\App\Http\Controllers\Teacher\ClassController::class, 'detachExam'])
+        ->name('classes.detach-exam');
 });
 
 // Student routes
@@ -163,6 +179,23 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::get('/practice/wrong-answers', [\App\Http\Controllers\Student\PracticeController::class, 'wrongAnswers'])->name('practice.wrong-answers');
     Route::get('/practice/start', [\App\Http\Controllers\Student\PracticeController::class, 'startPractice'])->name('practice.start');
     Route::post('/practice/submit', [\App\Http\Controllers\Student\PracticeController::class, 'submitPractice'])->name('practice.submit');
+
+    // Notifications - All
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'page'])->name('notifications');
+
+    // Classes - Student join and list
+    Route::get('/classes', [\App\Http\Controllers\Student\ClassController::class, 'index'])->name('classes.index');
+    Route::get('/classes/join', [\App\Http\Controllers\Student\ClassController::class, 'joinForm'])->name('classes.join');
+    Route::post('/classes/join', [\App\Http\Controllers\Student\ClassController::class, 'join'])->name('classes.join.post');
+    Route::get('/classes/{class}', [\App\Http\Controllers\Student\ClassController::class, 'show'])->name('classes.show');
+});
+
+// Authenticated user notifications (JSON via web routes for Blade fetch)
+Route::middleware(['auth'])->prefix('user/notifications')->name('user.notifications.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])->name('index');
+    Route::get('/unread', [\App\Http\Controllers\NotificationController::class, 'unread'])->name('unread');
+    Route::post('/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('read');
+    Route::post('/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('readAll');
 });
 
 

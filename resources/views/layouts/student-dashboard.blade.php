@@ -388,6 +388,11 @@
                             <i class="bi bi-trophy"></i>
                             <span>Luyện tập</span>
                         </a>
+                        <a class="nav-link {{ request()->routeIs('student.classes.*') ? 'active' : '' }}"
+                           href="{{ route('student.classes.index') }}">
+                            <i class="bi bi-people"></i>
+                            <span>Lớp học</span>
+                        </a>
                         
                         <a class="nav-link {{ request()->routeIs('student.history') ? 'active' : '' }}"
                            href="{{ route('student.history') }}">
@@ -401,64 +406,30 @@
                 <div class="d-flex align-items-center gap-2">
                     <!-- Notifications -->
                     <div class="dropdown">
-                        <button class="notification-btn" type="button" 
+                        <button id="notifDropdownBtn" class="notification-btn" type="button" 
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-bell"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-                                  style="font-size: 0.65rem;">
-                                3
-                            </span>
+                            <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" 
+                                  style="font-size: 0.65rem;">0</span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" style="min-width: 320px;">
+                        <ul id="notifDropdown" class="dropdown-menu dropdown-menu-end" style="min-width: 340px;">
                             <li>
-                                <h6 class="dropdown-header d-flex justify-content-between align-items-center">
+                                <div class="dropdown-header d-flex justify-content-between align-items-center">
                                     <span>Thông báo</span>
-                                    <span class="badge bg-primary rounded-pill">3</span>
-                                </h6>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span id="notifHeaderCount" class="badge bg-primary rounded-pill">0</span>
+                                        <button id="markAllReadBtn" class="btn btn-link btn-sm p-0 text-decoration-none">Đánh dấu đã đọc</button>
+                                    </div>
+                                </div>
                             </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item py-2" href="#">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="bi bi-file-earmark-plus text-primary"></i>
-                                        </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <div class="small fw-semibold">Đề thi mới: Laravel Basics</div>
-                                            <div class="text-muted small">5 phút trước</div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2" href="#">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="bi bi-check-circle text-success"></i>
-                                        </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <div class="small fw-semibold">Kết quả đã có: PHP OOP</div>
-                                            <div class="text-muted small">1 giờ trước</div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2" href="#">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="bi bi-trophy text-warning"></i>
-                                        </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <div class="small fw-semibold">Bạn đạt điểm cao nhất!</div>
-                                            <div class="text-muted small">2 giờ trước</div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
+                            <div id="notifListContainer">
+                                <li class="px-3 py-2 text-muted small" id="notifEmpty">Không có thông báo</li>
+                                <!-- Items will be injected here -->
+                            </div>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a class="dropdown-item text-center small text-primary fw-semibold" href="#">
+                                <a class="dropdown-item text-center small text-primary fw-semibold" href="{{ route('student.notifications') }}">
                                     Xem tất cả thông báo
                                 </a>
                             </li>
@@ -537,6 +508,11 @@
                href="{{ route('student.practice.index') }}">
                 <i class="bi bi-trophy"></i>
                 <span>Luyện tập</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('student.classes.*') ? 'active' : '' }}"
+               href="{{ route('student.classes.index') }}">
+                <i class="bi bi-people"></i>
+                <span>Lớp học</span>
             </a>
             
             <a class="nav-link {{ request()->routeIs('student.history') ? 'active' : '' }}"
@@ -675,7 +651,162 @@
                 const bsToast = new bootstrap.Toast(toast, { delay: 5000 });
                 bsToast.show();
             });
+
+            // Notifications boot
+            initNotifications();
         });
+
+        // ---------------- Notifications ----------------
+        function initNotifications() {
+            const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const unreadUrl = `{{ url('/user/notifications/unread') }}`;
+            const listUrl = `{{ url('/user/notifications') }}`;
+            const readAllUrl = `{{ url('/user/notifications/read-all') }}`;
+            const readBaseUrl = `{{ url('/user/notifications') }}`;
+            const resultsBaseUrl = `{{ url('/student/results') }}`;
+            const examsBaseUrl = `{{ url('/student/exams') }}`;
+            const badge = document.getElementById('notifBadge');
+            const headerCount = document.getElementById('notifHeaderCount');
+            const listContainer = document.getElementById('notifListContainer');
+            const emptyItem = document.getElementById('notifEmpty');
+            const dropdownBtn = document.getElementById('notifDropdownBtn');
+            const markAllBtn = document.getElementById('markAllReadBtn');
+
+            async function fetchUnreadCount() {
+                try {
+                    const res = await fetch(unreadUrl, {
+                        credentials: 'same-origin'
+                    });
+                    if (!res.ok) return;
+                    const json = await res.json();
+                    const items = json.data?.data || json.data || [];
+                    const count = items.length || (json.unread_count ?? 0);
+                    updateBadge(count);
+                } catch (e) { /* ignore */ }
+            }
+
+            async function fetchLatest() {
+                try {
+                    const res = await fetch(listUrl, {
+                        credentials: 'same-origin'
+                    });
+                    if (!res.ok) return;
+                    const json = await res.json();
+                    const items = json.data?.data || json.data || [];
+                    renderList(items.slice(0, 10));
+                    const unread = json.unread_count ?? 0;
+                    updateBadge(unread);
+                } catch (e) { renderList([]); }
+            }
+
+            function updateBadge(count) {
+                headerCount.textContent = count;
+                if (count > 0) {
+                    badge.textContent = count > 9 ? '9+' : count;
+                    badge.classList.remove('d-none');
+                } else {
+                    badge.classList.add('d-none');
+                }
+            }
+
+            function iconFor(item) {
+                const type = item.data?.type || item.type || '';
+                if (type === 'exam_completed') return '<i class="bi bi-check-circle text-success"></i>';
+                if (type === 'exam_published') return '<i class="bi bi-file-earmark-plus text-primary"></i>';
+                if (type === 'exam_reminder') return '<i class="bi bi-alarm text-warning"></i>';
+                return '<i class="bi bi-bell text-secondary"></i>';
+            }
+
+            function targetUrl(item) {
+                const d = item.data || {};
+                if (d.type === 'exam_completed' && d.attempt_id) {
+                    return resultsBaseUrl + '/' + d.attempt_id;
+                }
+                if ((d.type === 'exam_published' || d.type === 'exam_reminder') && d.exam_id) {
+                    return examsBaseUrl + '/' + d.exam_id;
+                }
+                return '#';
+            }
+
+            function timeAgo(dateStr) {
+                try {
+                    const d = new Date(dateStr);
+                    const diff = Math.floor((Date.now() - d.getTime())/1000);
+                    if (diff < 60) return diff + ' giây trước';
+                    if (diff < 3600) return Math.floor(diff/60) + ' phút trước';
+                    if (diff < 86400) return Math.floor(diff/3600) + ' giờ trước';
+                    return Math.floor(diff/86400) + ' ngày trước';
+                } catch { return ''; }
+            }
+
+            function renderList(items) {
+                listContainer.innerHTML = '';
+                if (!items || items.length === 0) {
+                    const li = document.createElement('li');
+                    li.className = 'px-3 py-2 text-muted small';
+                    li.textContent = 'Không có thông báo';
+                    listContainer.appendChild(li);
+                    return;
+                }
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    const url = targetUrl(item);
+                    li.innerHTML = `
+                        <a class="dropdown-item py-2 ${item.read_at ? '' : 'fw-semibold'}" href="#" data-id="${item.id}" data-url="${url}">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">${iconFor(item)}</div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="small">${(item.data?.message) ?? 'Thông báo'}</div>
+                                    <div class="text-muted small">${timeAgo(item.created_at)}</div>
+                                </div>
+                            </div>
+                        </a>`;
+                    listContainer.appendChild(li);
+                });
+
+                // bind click
+                listContainer.querySelectorAll('a.dropdown-item').forEach(a => {
+                    a.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const id = a.getAttribute('data-id');
+                        const url = a.getAttribute('data-url');
+                        try {
+                            await fetch(`${readBaseUrl}/${id}/read`, {
+                                method: 'POST',
+                                headers: { 'X-CSRF-TOKEN': csrf },
+                                credentials: 'same-origin'
+                            });
+                        } catch {}
+                        window.location.href = url;
+                    });
+                });
+            }
+
+            // mark all as read
+            if (markAllBtn) {
+                markAllBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await fetch(readAllUrl, {
+                            method: 'POST',
+                            headers: { 'X-CSRF-TOKEN': csrf },
+                            credentials: 'same-origin'
+                        });
+                        updateBadge(0);
+                        fetchLatest();
+                    } catch {}
+                });
+            }
+
+            // Fetch when dropdown is opened
+            dropdownBtn?.addEventListener('click', () => {
+                fetchLatest();
+            });
+
+            // Poll unread count
+            fetchUnreadCount();
+            setInterval(fetchUnreadCount, 30000);
+        }
     </script>
     
     @stack('scripts')
