@@ -46,6 +46,11 @@ class ExamAttempt extends Model
         return $this->hasMany(ExamAttemptAnswer::class, 'attempt_id');
     }
 
+    public function violations()
+    {
+        return $this->hasMany(ExamViolation::class, 'attempt_id');
+    }
+
     /**
      * Scopes
      */

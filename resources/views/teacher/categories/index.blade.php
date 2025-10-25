@@ -16,7 +16,7 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-0 text-gray-800">Danh mục môn học</h1>
+            <h1 class="h3 mb-0 text-gray-800">Danh mục môn học của tôi</h1>
             <p class="text-muted">Quản lý các danh mục cho đề thi và câu hỏi của bạn</p>
         </div>
         <div class="d-flex gap-2">
@@ -84,30 +84,14 @@
                                     <a href="{{ route('teacher.categories.show', $category) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye"></i> Xem
                                     </a>
-                                    
-                                    @if($category->created_by === Auth::id())
-                                        <a href="{{ route('teacher.categories.edit', $category) }}" class="btn btn-sm btn-outline-warning">
-                                            <i class="bi bi-pencil"></i> Sửa
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-danger delete-btn" 
-                                                data-category-id="{{ $category->id }}"
-                                                data-category-name="{{ $category->name }}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    @else
-                                        <button class="btn btn-sm btn-success" onclick="createExamWithCategory({{ $category->id }})">
-                                            <i class="bi bi-plus"></i> Tạo đề thi
-                                        </button>
-                                    @endif
-                                </div>
-                                
-                                <!-- Status Badge -->
-                                <div class="mt-2">
-                                    @if($category->created_by === Auth::id())
-                                        <span class="badge bg-info">
-                                            <i class="bi bi-person"></i> Của tôi
-                                        </span>
-                                    @endif
+                                    <a href="{{ route('teacher.categories.edit', $category) }}" class="btn btn-sm btn-outline-warning">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger delete-btn" 
+                                            data-category-id="{{ $category->id }}"
+                                            data-category-name="{{ $category->name }}">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -154,12 +138,7 @@
                                                 @endif
                                                 <div>
                                                     <div class="fw-semibold">{{ $category->name }}</div>
-                                                    <div class="text-muted small">
-                                                        Thứ tự: {{ $category->sort_order }}
-                                                        @if($category->created_by === Auth::id())
-                                                            <span class="badge bg-info ms-2">Của tôi</span>
-                                                        @endif
-                                                    </div>
+                                                    <div class="text-muted small">Thứ tự: {{ $category->sort_order }}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -178,25 +157,16 @@
                                                    class="btn btn-outline-info" title="Xem chi tiết">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                
-                                                @if($category->created_by === Auth::id())
-                                                    <a href="{{ route('teacher.categories.edit', $category) }}" 
-                                                       class="btn btn-outline-warning" title="Chỉnh sửa">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </a>
-                                                    <button class="btn btn-outline-danger delete-btn"
-                                                            data-category-id="{{ $category->id }}"
-                                                            data-category-name="{{ $category->name }}"
-                                                            title="Xóa">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                @else
-                                                    <button class="btn btn-outline-success" 
-                                                            onclick="createExamWithCategory({{ $category->id }})"
-                                                            title="Tạo đề thi">
-                                                        <i class="bi bi-plus"></i>
-                                                    </button>
-                                                @endif
+                                                <a href="{{ route('teacher.categories.edit', $category) }}" 
+                                                   class="btn btn-outline-warning" title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button class="btn btn-outline-danger delete-btn"
+                                                        data-category-id="{{ $category->id }}"
+                                                        data-category-name="{{ $category->name }}"
+                                                        title="Xóa">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

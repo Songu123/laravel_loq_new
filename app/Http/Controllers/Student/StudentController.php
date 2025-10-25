@@ -203,15 +203,28 @@ class StudentController extends Controller
 
         $exams = $query->paginate(12)->withQueryString();
 
-        // Add user's attempt info to each exam
+        // Add user's attempt info to each exam - OPTIMIZED to prevent N+1
         $userId = auth()->id();
-        $exams->each(function($exam) use ($userId) {
-            $exam->my_attempt = ExamAttempt::where('exam_id', $exam->id)
-                ->where('user_id', $userId)
-                ->latest()
-                ->first();
-            
-            $exam->attempts_count = ExamAttempt::where('exam_id', $exam->id)->count();
+        $examIds = $exams->pluck('id');
+        
+        // Fetch all attempts for these exams in one query
+        $userAttempts = ExamAttempt::whereIn('exam_id', $examIds)
+            ->where('user_id', $userId)
+            ->select('exam_id', 'id', 'percentage', 'created_at')
+            ->latest()
+            ->get()
+            ->groupBy('exam_id')
+            ->map->first(); // Get only the latest attempt per exam
+        
+        // Fetch attempt counts for all exams in one query
+        $attemptCounts = ExamAttempt::whereIn('exam_id', $examIds)
+            ->select('exam_id', DB::raw('COUNT(*) as count'))
+            ->groupBy('exam_id')
+            ->pluck('count', 'exam_id');
+        
+        $exams->each(function($exam) use ($userAttempts, $attemptCounts) {
+            $exam->my_attempt = $userAttempts->get($exam->id);
+            $exam->attempts_count = $attemptCounts->get($exam->id, 0);
             $exam->is_new = $exam->created_at->isAfter(now()->subDays(7));
             $exam->canTake = $this->canTakeExam($exam);
         });

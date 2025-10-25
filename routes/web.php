@@ -111,9 +111,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 // Teacher routes
 Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('teacher-dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Teacher\DashboardController::class, 'index'])
+        ->name('dashboard');
     
     // Teacher category routes (CRUD with restrictions)
     Route::resource('categories', \App\Http\Controllers\Teacher\CategoryController::class);
@@ -153,6 +152,18 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         ->name('classes.detach-exam');
     Route::get('classes/{class}/exams/{exam}/results', [\App\Http\Controllers\Teacher\ClassController::class, 'examResults'])
         ->name('classes.exam-results');
+    
+    // AI Question Import from PDF
+    Route::get('ai-import', [\App\Http\Controllers\Teacher\AIQuestionImportController::class, 'showUploadForm'])
+        ->name('ai-import.form');
+    Route::post('ai-import/upload', [\App\Http\Controllers\Teacher\AIQuestionImportController::class, 'uploadPDF'])
+        ->name('ai-import.upload');
+    Route::get('ai-import/review', [\App\Http\Controllers\Teacher\AIQuestionImportController::class, 'reviewQuestions'])
+        ->name('ai-import.review');
+    Route::post('ai-import/save', [\App\Http\Controllers\Teacher\AIQuestionImportController::class, 'saveQuestions'])
+        ->name('ai-import.save');
+    Route::post('ai-import/cancel', [\App\Http\Controllers\Teacher\AIQuestionImportController::class, 'cancelImport'])
+        ->name('ai-import.cancel');
 });
 
 // Student routes

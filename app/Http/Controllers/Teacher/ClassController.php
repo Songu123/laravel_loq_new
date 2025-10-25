@@ -196,6 +196,37 @@ class ClassController extends Controller
         ));
     }
 
+    /**
+     * Get violations for an exam attempt (API endpoint)
+     */
+    public function getViolations(ExamAttempt $attempt)
+    {
+        // Verify teacher owns the exam
+        if ($attempt->exam->created_by !== Auth::id()) {
+            abort(403, 'Bạn không có quyền xem vi phạm này.');
+        }
+
+        $violations = $attempt->violations()
+            ->orderBy('violated_at', 'desc')
+            ->get()
+            ->map(function($violation) {
+                return [
+                    'id' => $violation->id,
+                    'violation_type' => $violation->violation_type,
+                    'description' => $violation->description ?? $violation->getViolationTypeText(),
+                    'violated_at' => $violation->violated_at->toIso8601String(),
+                    'severity' => $violation->severity ?? 2,
+                    'severity_text' => $violation->getSeverityText(),
+                ];
+            });
+
+        return response()->json([
+            'violations' => $violations,
+            'total_count' => $violations->count(),
+            'attempt_id' => $attempt->id,
+        ]);
+    }
+
     private function authorizeTeacher(ClassRoom $class)
     {
         if ($class->teacher_id !== Auth::id()) {

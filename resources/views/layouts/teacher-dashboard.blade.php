@@ -297,6 +297,12 @@ body.teacher-dashboard-page footer {
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('teacher.ai-import.form') }}" class="nav-link {{ request()->routeIs('teacher.ai-import.*') ? 'active' : '' }}">
+                            <i class="bi bi-robot text-primary"></i>
+                            <span>Tạo đề từ PDF (AI)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="bi bi-question-circle"></i>
                             <span>Ngân hàng câu hỏi</span>

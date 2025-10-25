@@ -16,13 +16,10 @@ class Question extends Model
         'marks',
         'order',
         'explanation',
-        'image',
-        'metadata',
         'is_required'
     ];
 
     protected $casts = [
-        'metadata' => 'array',
         'is_required' => 'boolean',
         'marks' => 'decimal:2'
     ];
