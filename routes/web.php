@@ -151,6 +151,8 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         ->name('classes.attach-exam');
     Route::post('classes/{class}/detach-exam', [\App\Http\Controllers\Teacher\ClassController::class, 'detachExam'])
         ->name('classes.detach-exam');
+    Route::get('classes/{class}/exams/{exam}/results', [\App\Http\Controllers\Teacher\ClassController::class, 'examResults'])
+        ->name('classes.exam-results');
 });
 
 // Student routes

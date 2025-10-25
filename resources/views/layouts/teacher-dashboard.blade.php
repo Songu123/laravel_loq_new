@@ -22,9 +22,9 @@ body.teacher-dashboard-page footer {
     display: none !important;
 }
 
-/* Teacher-specific colors */
+/* Teacher-specific colors (aligned with default/primary theme) */
 .teacher-dashboard-wrapper .sidebar {
-    background: linear-gradient(180deg, #059669 0%, #047857 100%);
+    background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
 }
 
 .teacher-dashboard-wrapper .sidebar-brand {
@@ -32,13 +32,27 @@ body.teacher-dashboard-page footer {
 }
 
 .teacher-dashboard-wrapper .sidebar-brand i {
-    color: #10b981;
+    color: #0dcaf0; /* bootstrap info as accent */
 }
 
-.teacher-dashboard-wrapper .nav-link:hover,
-.teacher-dashboard-wrapper .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.1);
+.teacher-dashboard-wrapper .sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 500;
+}
+.teacher-dashboard-wrapper .sidebar .nav-link i {
+    color: #cfe2ff;
+}
+.teacher-dashboard-wrapper .sidebar .nav-link:hover,
+.teacher-dashboard-wrapper .sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
     color: #ffffff;
+}
+.teacher-dashboard-wrapper .nav-section-header {
+    color: #e2e8f0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    opacity: .95;
 }
 
 .teacher-dashboard-wrapper .topbar {
@@ -46,18 +60,49 @@ body.teacher-dashboard-page footer {
     border-bottom: 1px solid #e5e7eb;
 }
 
+/* Content base text for readability */
+.teacher-dashboard-wrapper .dashboard-content {
+    color: #212529;
+}
+.teacher-dashboard-wrapper .dashboard-content h1,
+.teacher-dashboard-wrapper .dashboard-content h2,
+.teacher-dashboard-wrapper .dashboard-content h3,
+.teacher-dashboard-wrapper .dashboard-content h4,
+.teacher-dashboard-wrapper .dashboard-content h5 {
+    color: #1f2937; /* slate-800 */
+}
+.teacher-dashboard-wrapper .dashboard-content a {
+    /* color: #0d6efd; */
+}
+.teacher-dashboard-wrapper .dashboard-content a:hover {
+    color: #0a58ca;
+}
+
 /* User avatar in topbar */
 .user-avatar-small {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #059669;
+    background: #0d6efd;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     font-size: 0.875rem;
+}
+
+/* Large avatar in sidebar footer */
+.teacher-dashboard-wrapper .sidebar .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #0d6efd;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
 }
 
 /* Topbar dropdown styling */
@@ -115,6 +160,90 @@ body.teacher-dashboard-page footer {
 
 .user-actions .dropdown-item:hover {
     background: #f3f4f6;
+}
+
+/* Tabs and pills (functional tabs) unified to primary theme */
+.teacher-dashboard-wrapper .nav-tabs .nav-link {
+    color: #495057;
+}
+.teacher-dashboard-wrapper .nav-tabs .nav-link:hover {
+    border-color: transparent;
+    color: #0a58ca;
+}
+.teacher-dashboard-wrapper .nav-tabs .nav-link.active,
+.teacher-dashboard-wrapper .nav-tabs .nav-item.show .nav-link {
+    color: #0d6efd;
+    border-color: #0d6efd #0d6efd #ffffff;
+}
+.teacher-dashboard-wrapper .nav-pills .nav-link.active,
+.teacher-dashboard-wrapper .nav-pills .show > .nav-link {
+    background-color: #0d6efd;
+}
+
+/* Focus styles for accessibility */
+.teacher-dashboard-wrapper .sidebar .nav-link:focus,
+.teacher-dashboard-wrapper .topbar .btn:focus,
+.teacher-dashboard-wrapper .dropdown-menu .dropdown-item:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* Unify buttons to primary theme inside teacher dashboard */
+.teacher-dashboard-wrapper .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.teacher-dashboard-wrapper .btn-primary:hover,
+.teacher-dashboard-wrapper .btn-primary:focus {
+    background-color: #0a58ca;
+    border-color: #0a58ca;
+}
+
+/* Ensure primary buttons have readable white text and icons */
+.teacher-dashboard-wrapper .btn.btn-primary {
+    color: #ffffff;
+}
+.teacher-dashboard-wrapper .btn.btn-primary i {
+    color: #ffffff;
+}
+
+/* Map success-styled buttons to primary for consistency */
+.teacher-dashboard-wrapper .btn-success {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.teacher-dashboard-wrapper .btn-success:hover,
+.teacher-dashboard-wrapper .btn-success:focus {
+    background-color: #0a58ca;
+    border-color: #0a58ca;
+}
+.teacher-dashboard-wrapper .btn-outline-success {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+.teacher-dashboard-wrapper .btn-outline-success:hover,
+.teacher-dashboard-wrapper .btn-outline-success:focus {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+/* Banners and headers: unify to primary accent */
+.teacher-dashboard-wrapper .card-header {
+    border-bottom: 2px solid #0d6efd;
+    color: #0d6efd;
+}
+
+/* Map green alerts to primary tones for consistency */
+.teacher-dashboard-wrapper .alert-success {
+    color: #084298; /* bootstrap primary text */
+    background-color: #e7f1ff; /* light primary bg */
+    border-color: #b6d4fe;
+}
+.teacher-dashboard-wrapper .alert-info {
+    color: #055160;
+    background-color: #cff4fc;
+    border-color: #9eeaf9;
 }
 </style>
 @endpush
@@ -295,7 +424,7 @@ body.teacher-dashboard-page footer {
             <div class="topbar-right">
                 <!-- Quick Actions -->
                 <div class="quick-actions">
-                    <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="tooltip" title="Tạo đề thi nhanh">
+                    <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="tooltip" title="Tạo đề thi nhanh">
                         <i class="bi bi-plus"></i>
                     </button>
                     <button class="btn btn-outline-secondary btn-sm me-3" data-bs-toggle="tooltip" title="Tìm kiếm">

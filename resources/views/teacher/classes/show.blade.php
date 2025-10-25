@@ -63,6 +63,9 @@
                         <td>{{ optional($ex->category)->name }}</td>
                         <td>{{ $ex->total_questions }}</td>
                         <td class="text-end">
+                            <a href="{{ route('teacher.classes.exam-results', [$class, $ex]) }}" class="btn btn-sm btn-primary me-1">
+                                <i class="bi bi-bar-chart-fill"></i> Xem kết quả
+                            </a>
                             <form action="{{ route('teacher.classes.detach-exam', $class) }}" method="POST" class="d-inline" onsubmit="return confirm('Gỡ đề này khỏi lớp?');">
                                 @csrf
                                 <input type="hidden" name="exam_id" value="{{ $ex->id }}">

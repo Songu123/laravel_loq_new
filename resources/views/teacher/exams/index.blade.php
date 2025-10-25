@@ -20,7 +20,7 @@
             <p class="text-muted">Tạo và quản lý các đề thi của bạn</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('teacher.exams.create') }}" class="btn btn-success">
+            <a href="{{ route('teacher.exams.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus"></i> Tạo đề thi mới
             </a>
             <button class="btn btn-outline-secondary" onclick="toggleView('grid')">
@@ -161,7 +161,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="stat-item">
-                                            <div class="stat-number text-success">{{ $exam->total_marks }}</div>
+                                            <div class="stat-number text-primary">{{ $exam->total_marks }}</div>
                                             <div class="stat-label">Điểm</div>
                                         </div>
                                     </div>
@@ -179,7 +179,7 @@
                                         {{ $exam->difficulty_level_text }}
                                     </span>
                                     @if($exam->is_active)
-                                        <span class="badge bg-success">Hoạt động</span>
+                                        <span class="badge bg-primary">Hoạt động</span>
                                     @else
                                         <span class="badge bg-secondary">Tạm dừng</span>
                                     @endif
@@ -202,7 +202,7 @@
                                     <a href="{{ route('teacher.exams.show', $exam) }}" class="btn btn-sm btn-outline-primary flex-fill">
                                         <i class="bi bi-eye"></i> Xem
                                     </a>
-                                    <a href="{{ route('teacher.exams.edit', $exam) }}" class="btn btn-sm btn-outline-warning flex-fill">
+                                    <a href="{{ route('teacher.exams.edit', $exam) }}" class="btn btn-sm btn-outline-primary flex-fill">
                                         <i class="bi bi-pencil"></i> Sửa
                                     </a>
                                 </div>
@@ -216,7 +216,7 @@
                 <i class="bi bi-clipboard-x display-1 text-muted mb-3"></i>
                 <h5 class="text-muted">Chưa có đề thi nào</h5>
                 <p class="text-muted">Tạo đề thi đầu tiên để bắt đầu quản lý bài kiểm tra của bạn.</p>
-                <a href="{{ route('teacher.exams.create') }}" class="btn btn-success mt-2">
+                <a href="{{ route('teacher.exams.create') }}" class="btn btn-primary mt-2">
                     <i class="bi bi-plus"></i> Tạo đề thi đầu tiên
                 </a>
             </div>
@@ -270,7 +270,7 @@
                                             <span class="badge bg-primary">{{ $exam->questions_count }}</span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-success">{{ $exam->total_marks }}</span>
+                                            <span class="badge bg-primary">{{ $exam->total_marks }}</span>
                                         </td>
                                         <td>
                                             <span class="text-muted small">{{ $exam->duration_text }}</span>
@@ -281,8 +281,8 @@
                                                    class="btn btn-outline-info" title="Xem chi tiết">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a href="{{ route('teacher.exams.edit', $exam) }}" 
-                                                   class="btn btn-outline-warning" title="Chỉnh sửa">
+                                                                <a href="{{ route('teacher.exams.edit', $exam) }}" 
+                                                                    class="btn btn-outline-primary" title="Chỉnh sửa">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <button class="btn btn-outline-danger delete-exam"
@@ -305,7 +305,7 @@
                 <i class="bi bi-clipboard-x display-1 text-muted mb-3"></i>
                 <h5 class="text-muted">Chưa có đề thi nào</h5>
                 <p class="text-muted">Tạo đề thi đầu tiên để bắt đầu quản lý bài kiểm tra của bạn.</p>
-                <a href="{{ route('teacher.exams.create') }}" class="btn btn-success mt-2">
+                <a href="{{ route('teacher.exams.create') }}" class="btn btn-primary mt-2">
                     <i class="bi bi-plus"></i> Tạo đề thi đầu tiên
                 </a>
             </div>
