@@ -200,11 +200,13 @@
                                                         </td>
                                                         <td class="text-end">
                                                             @if($attempt->violations->count() > 0)
-                                                                <a href="{{ route('teacher.violations.report', $attempt) }}" 
-                                                                   class="btn btn-sm btn-outline-danger"
-                                                                   target="_blank">
-                                                                    <i class="bi bi-flag"></i> Vi phạm
-                                                                </a>
+                                                                <button type="button" 
+                                                                        class="btn btn-sm btn-outline-danger"
+                                                                        onclick="showViolations({{ $attempt->id }})">
+                                                                    <i class="bi bi-flag"></i> Chi tiết vi phạm
+                                                                </button>
+                                                            @else
+                                                                <span class="text-muted small">-</span>
                                                             @endif
                                                         </td>
                                                     </tr>
@@ -228,9 +230,125 @@
     </div>
 </div>
 
+<!-- Violations Modal -->
+<div class="modal fade" id="violationsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết vi phạm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="violationsContent">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 .breadcrumb-item + .breadcrumb-item::before {
     color: #6c757d;
 }
 </style>
+
+@push('scripts')
+<script>
+function showViolations(attemptId) {
+    const modal = new bootstrap.Modal(document.getElementById('violationsModal'));
+    modal.show();
+    
+    // Reset content with loading spinner
+    document.getElementById('violationsContent').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Đang tải...</span>
+            </div>
+            <p class="text-muted mt-2">Đang tải dữ liệu vi phạm...</p>
+        </div>
+    `;
+    
+    // Load violations data
+    fetch(`/api/teacher/attempts/${attemptId}/violations`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            let html = '';
+            
+            if (data.violations && data.violations.length > 0) {
+                html = '<div class="list-group">';
+                data.violations.forEach((violation, index) => {
+                    const time = new Date(violation.violated_at).toLocaleString('vi-VN');
+                    const typeClass = violation.violation_type === 'tab_switch' ? 'warning' : 'danger';
+                    const typeText = {
+                        'tab_switch': 'Chuyển tab',
+                        'copy_paste': 'Copy/Paste',
+                        'right_click': 'Click chuột phải',
+                        'fullscreen_exit': 'Thoát fullscreen',
+                        'mouse_leave': 'Chuột rời màn hình',
+                        'keyboard_shortcut': 'Phím tắt đáng ngờ',
+                        'time_anomaly': 'Thời gian bất thường',
+                        'multiple_devices': 'Nhiều thiết bị',
+                        'suspicious_pattern': 'Hành vi đáng ngờ'
+                    }[violation.violation_type] || violation.violation_type;
+                    
+                    const severityBadge = {
+                        1: '<span class="badge bg-info">Thấp</span>',
+                        2: '<span class="badge bg-warning">Trung bình</span>',
+                        3: '<span class="badge bg-danger">Cao</span>',
+                        4: '<span class="badge bg-dark">Nghiêm trọng</span>'
+                    }[violation.severity] || '<span class="badge bg-secondary">N/A</span>';
+                    
+                    html += `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <span class="badge bg-${typeClass}">#${index + 1}</span>
+                                        <strong>${typeText}</strong>
+                                        ${severityBadge}
+                                    </div>
+                                    <p class="mb-1 text-muted">${violation.description || 'Không có mô tả'}</p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock"></i> ${time}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                html += `<div class="mt-3 text-center"><small class="text-muted">Tổng cộng: ${data.total_count} vi phạm</small></div>`;
+            } else {
+                html = `
+                    <div class="alert alert-success text-center">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Không có vi phạm nào được ghi nhận.
+                    </div>
+                `;
+            }
+            
+            document.getElementById('violationsContent').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('violationsContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Không thể tải dữ liệu vi phạm. Vui lòng thử lại.
+                    <br><small class="text-muted">Error: ${error.message}</small>
+                </div>
+            `;
+        });
+}
+</script>
+@endpush
 @endsection
+

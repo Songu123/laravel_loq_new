@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,12 +13,20 @@ use Illuminate\Support\Str;
 class CategoryController extends Controller
 {
     /**
+     * Apply authorization middleware
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Category::class, 'category');
+    }
+
+    /**
      * Display a listing of categories for teachers
      */
     public function index()
     {
-        // Teachers can see all active categories (including their own)
-        $categories = Category::active()
+        // Teachers can only see their own categories
+        $categories = Category::where('created_by', Auth::id())
             ->with('creator')
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -36,15 +46,9 @@ class CategoryController extends Controller
     /**
      * Store a newly created category
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'color' => 'required|string|regex:/^#[a-fA-F0-9]{6}$/',
-            'icon' => 'nullable|string|max:50',
-            'sort_order' => 'integer|min:0'
-        ]);
+        $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['name']);
         $validated['created_by'] = Auth::id();
@@ -62,11 +66,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        // Only show active categories to teachers
-        if (!$category->is_active) {
-            abort(404);
-        }
-        
+        // Authorization handled by CategoryPolicy
         return view('teacher.categories.show', compact('category'));
     }
 
@@ -75,31 +75,17 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        // Teachers can only edit their own categories
-        if ($category->created_by !== Auth::id()) {
-            abort(403, 'Bạn chỉ có thể chỉnh sửa danh mục do mình tạo.');
-        }
-        
+        // Authorization handled by CategoryPolicy
         return view('teacher.categories.edit', compact('category'));
     }
 
     /**
      * Update the specified category
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        // Teachers can only edit their own categories
-        if ($category->created_by !== Auth::id()) {
-            abort(403, 'Bạn chỉ có thể chỉnh sửa danh mục do mình tạo.');
-        }
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'color' => 'required|string|regex:/^#[a-fA-F0-9]{6}$/',
-            'icon' => 'nullable|string|max:50',
-            'sort_order' => 'integer|min:0'
-        ]);
+        // Authorization handled by CategoryPolicy
+        $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['name']);
         // Keep category active after teacher edits
@@ -116,11 +102,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        // Teachers can only delete their own categories
-        if ($category->created_by !== Auth::id()) {
-            abort(403, 'Bạn chỉ có thể xóa danh mục do mình tạo.');
-        }
-
+        // Authorization handled by CategoryPolicy
         $category->delete();
 
         return redirect()->route('teacher.categories.index')
@@ -132,7 +114,8 @@ class CategoryController extends Controller
      */
     public function getCategories(Request $request)
     {
-        $categories = Category::active()
+        // Teachers can only use their own categories for exams/questions
+        $categories = Category::where('created_by', Auth::id())
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get(['id', 'name', 'color', 'icon', 'is_active']);
@@ -145,9 +128,8 @@ class CategoryController extends Controller
      */
     public function requestApproval(Category $category)
     {
-        if ($category->created_by !== Auth::id()) {
-            abort(403);
-        }
+        // Authorization handled by CategoryPolicy
+        $this->authorize('requestApproval', $category);
 
         // Could add a status field in future for tracking approval requests
         return response()->json([

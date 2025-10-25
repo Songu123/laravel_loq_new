@@ -23,4 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications/unread', [\App\Http\Controllers\NotificationController::class, 'unread']);
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+    
+    // Teacher API routes
+    Route::middleware('teacher')->prefix('teacher')->group(function () {
+        Route::get('/attempts/{attempt}/violations', [\App\Http\Controllers\Teacher\ClassController::class, 'getViolations']);
+    });
 });
