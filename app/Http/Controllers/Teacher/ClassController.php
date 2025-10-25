@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ClassRoom;
 use App\Models\ClassJoinRequest;
 use App\Models\Exam;
+use App\Models\ExamAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,7 @@ class ClassController extends Controller
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'teacher_id' => Auth::id(),
+            'join_code' => ClassRoom::generateUniqueCode(),
             'is_active' => true,
             'require_approval' => $request->boolean('require_approval', true),
         ]);
@@ -150,6 +152,48 @@ class ClassController extends Controller
         $examId = (int) $request->input('exam_id');
         $class->exams()->detach($examId);
         return back()->with('success', 'Đã gỡ đề thi khỏi lớp.');
+    }
+
+    /**
+     * View student exam results within a class for a specific exam
+     */
+    public function examResults(ClassRoom $class, Exam $exam)
+    {
+        $this->authorizeTeacher($class);
+        
+        // Verify the exam is attached to this class
+        if (!$class->exams()->where('exams.id', $exam->id)->exists()) {
+            abort(404, 'Đề thi không thuộc lớp này.');
+        }
+
+        // Load all students in the class with their attempts for this exam
+        $students = $class->students()
+            ->with(['examAttempts' => function($query) use ($exam) {
+                $query->where('exam_id', $exam->id)
+                      ->with('violations')
+                      ->latest();
+            }])
+            ->get();
+
+        // Calculate statistics
+        $totalStudents = $students->count();
+        $studentsAttempted = $students->filter(function($student) {
+            return $student->examAttempts->isNotEmpty();
+        })->count();
+        
+        $allAttempts = $students->flatMap->examAttempts;
+        $averageScore = $allAttempts->avg('percentage');
+        $passedCount = $allAttempts->where('percentage', '>=', 50)->count();
+
+        return view('teacher.classes.exam-results', compact(
+            'class', 
+            'exam', 
+            'students',
+            'totalStudents',
+            'studentsAttempted',
+            'averageScore',
+            'passedCount'
+        ));
     }
 
     private function authorizeTeacher(ClassRoom $class)

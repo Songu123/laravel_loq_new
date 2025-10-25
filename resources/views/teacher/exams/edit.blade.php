@@ -53,7 +53,7 @@
             <div class="col-lg-4">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-white py-3">
-                        <h6 class="m-0 font-weight-bold text-warning">Thông tin cơ bản</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Thông tin cơ bản</h6>
                     </div>
                     <div class="card-body">
                         <!-- Title -->
@@ -136,7 +136,7 @@
                 <!-- Settings -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-white py-3">
-                        <h6 class="m-0 font-weight-bold text-warning">Cài đặt</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Cài đặt</h6>
                     </div>
                     <div class="card-body">
                         <!-- Timing -->
@@ -226,7 +226,7 @@
                 <!-- Actions -->
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <button type="submit" class="btn btn-warning w-100 mb-2">
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
                             <i class="bi bi-save"></i> Cập nhật đề thi
                         </button>
                         <button type="button" class="btn btn-outline-secondary w-100" onclick="window.history.back()">
@@ -241,8 +241,8 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-warning">Câu hỏi</h6>
-                            <button type="button" class="btn btn-warning btn-sm" onclick="addQuestion()">
+                            <h6 class="m-0 font-weight-bold text-primary">Câu hỏi</h6>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="addQuestion()">
                                 <i class="bi bi-plus-circle"></i> Thêm câu hỏi
                             </button>
                         </div>

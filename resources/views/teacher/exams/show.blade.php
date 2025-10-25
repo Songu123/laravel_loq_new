@@ -21,7 +21,7 @@
             <p class="text-muted">Chi tiết đề thi và câu hỏi</p>
         </div>
         <div class="btn-group">
-            <a href="{{ route('teacher.exams.edit', $exam) }}" class="btn btn-warning">
+            <a href="{{ route('teacher.exams.edit', $exam) }}" class="btn btn-primary">
                 <i class="bi bi-pencil"></i> Chỉnh sửa
             </a>
             <a href="{{ route('teacher.exams.index') }}" class="btn btn-secondary">
@@ -43,7 +43,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white py-3">
-                    <h6 class="m-0 font-weight-bold text-success">Thông tin đề thi</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Thông tin đề thi</h6>
                 </div>
                 <div class="card-body">
                     <!-- Basic Info -->
@@ -110,7 +110,7 @@
                         <label class="form-label text-muted small">Trạng thái</label>
                         <div>
                             @if($exam->is_active)
-                                <span class="badge bg-success">
+                                <span class="badge bg-primary">
                                     <i class="bi bi-check-circle me-1"></i>Hoạt động
                                 </span>
                             @else
@@ -150,7 +150,7 @@
             <!-- Statistics -->
             <div class="card shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="m-0 font-weight-bold text-success">Thống kê</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Thống kê</h6>
                 </div>
                 <div class="card-body">
                     <div class="row text-center">
@@ -162,7 +162,7 @@
                         </div>
                         <div class="col-4">
                             <div class="stat-item">
-                                <div class="stat-number text-success">{{ $exam->total_marks }}</div>
+                                <div class="stat-number text-primary">{{ $exam->total_marks }}</div>
                                 <div class="stat-label">Tổng điểm</div>
                             </div>
                         </div>
@@ -214,7 +214,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-white py-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-success">Câu hỏi ({{ $exam->questions->count() }})</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Câu hỏi ({{ $exam->questions->count() }})</h6>
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-secondary" onclick="toggleAllAnswers()">
                                 <i class="bi bi-eye"></i> Hiện/Ẩn đáp án
@@ -255,11 +255,11 @@
                                                     <div class="list-group-item {{ $answer->is_correct ? 'list-group-item-success' : '' }} px-0 py-2">
                                                         <div class="d-flex align-items-center">
                                                             @if($answer->is_correct)
-                                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                                <i class="bi bi-check-circle-fill text-primary me-2"></i>
                                                             @else
                                                                 <i class="bi bi-circle me-2 text-muted"></i>
                                                             @endif
-                                                            <span class="{{ $answer->is_correct ? 'fw-bold text-success' : '' }}">
+                                                            <span class="{{ $answer->is_correct ? 'fw-bold text-primary' : '' }}">
                                                                 {{ $answer->answer_text }}
                                                             </span>
                                                         </div>
@@ -286,7 +286,7 @@
                             <i class="bi bi-question-circle display-4 text-muted mb-3"></i>
                             <h6 class="text-muted">Chưa có câu hỏi nào</h6>
                             <p class="text-muted">Thêm câu hỏi để hoàn thiện đề thi của bạn.</p>
-                            <a href="{{ route('teacher.exams.edit', $exam) }}" class="btn btn-warning">
+                            <a href="{{ route('teacher.exams.edit', $exam) }}" class="btn btn-primary">
                                 <i class="bi bi-pencil"></i> Thêm câu hỏi
                             </a>
                         </div>
@@ -316,7 +316,7 @@
 }
 
 .question-card {
-    border-left: 4px solid #10b981;
+    border-left: 4px solid #0d6efd;
 }
 
 .question-text {
@@ -325,8 +325,8 @@
 }
 
 .list-group-item-success {
-    background-color: #d1fae5;
-    border-color: #a7f3d0;
+    background-color: #e7f1ff; /* primary light */
+    border-color: #b6d4fe;
 }
 
 .answers-section.show,

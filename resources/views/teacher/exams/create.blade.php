@@ -33,7 +33,7 @@
             <div class="col-lg-4">
                 <div class="card shadow-sm sticky-top" style="top: 20px;">
                     <div class="card-header bg-white py-3">
-                        <h6 class="m-0 font-weight-bold text-success">Thông tin đề thi</h6>
+                        <h6 class="m-0 font-weight-bold">Thông tin đề thi</h6>
                     </div>
                     <div class="card-body">
                         <!-- Title -->
@@ -162,14 +162,14 @@
                         </div>
 
                         <!-- Info Notice -->
-                        <div class="alert alert-success">
+                        <div class="alert alert-primary">
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Thông tin:</strong> Đề thi sẽ được kích hoạt ngay sau khi tạo.
                         </div>
 
                         <!-- Submit Button -->
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check"></i> Tạo đề thi
                             </button>
                         </div>
@@ -182,8 +182,8 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-success">Câu hỏi</h6>
-                            <button type="button" class="btn btn-sm btn-success" id="addQuestion">
+                            <h6 class="m-0 font-weight-bold text-primary">Câu hỏi</h6>
+                            <button type="button" class="btn btn-sm btn-primary" id="addQuestion">
                                 <i class="bi bi-plus"></i> Thêm câu hỏi
                             </button>
                         </div>
@@ -210,7 +210,7 @@
     <div class="question-item card mb-3" data-question-index="">
         <div class="card-header bg-light">
             <div class="d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 text-success">Câu hỏi <span class="question-number"></span></h6>
+                <h6 class="mb-0">Câu hỏi <span class="question-number"></span></h6>
                 <button type="button" class="btn btn-sm btn-outline-danger remove-question">
                     <i class="bi bi-trash"></i>
                 </button>
@@ -266,7 +266,7 @@
             <div class="answers-container">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <label class="form-label mb-0">Đáp án</label>
-                    <button type="button" class="btn btn-sm btn-outline-success add-answer">
+                    <button type="button" class="btn btn-sm btn-outline-primary add-answer">
                         <i class="bi bi-plus"></i> Thêm đáp án
                     </button>
                 </div>
