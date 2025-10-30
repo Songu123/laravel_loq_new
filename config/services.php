@@ -40,4 +40,11 @@ return [
         'url' => env('PYTHON_API_URL', 'http://127.0.0.1:5001'),
     ],
 
+    'face_recognition' => [
+        'url' => env('FACE_RECOGNITION_API_URL', 'http://127.0.0.1:8001'),
+        'enabled' => env('FACE_RECOGNITION_ENABLED', true),
+        'threshold' => env('FACE_RECOGNITION_THRESHOLD', 0.6),
+        'cache_ttl' => env('FACE_RECOGNITION_CACHE_TTL', 3600),
+    ],
+
 ];

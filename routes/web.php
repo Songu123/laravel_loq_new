@@ -57,6 +57,10 @@ Route::middleware(('guest'))->group(function () {
     Route::post('/register/student', [\App\Http\Controllers\AuthController::class, 'registerStudent'])->name('register.student.post');
     Route::get('/login/student', [\App\Http\Controllers\AuthController::class, 'showLoginStudent'])->name('login.student');
     Route::post('/login/student', [\App\Http\Controllers\AuthController::class, 'loginStudent'])->name('login.student.post');
+    
+    // Face Recognition Login (Admin only)
+    Route::get('/face-login', [\App\Http\Controllers\Auth\FaceLoginController::class, 'showForm'])->name('face.login');
+    Route::post('/face-verify', [\App\Http\Controllers\Auth\FaceLoginController::class, 'verify'])->name('face.verify');
 });
 
 // HomeController routes
@@ -107,6 +111,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::post('categories/{category}/toggle-status', [\App\Http\Controllers\CategoryController::class, 'toggleStatus'])
         ->name('categories.toggle-status');
+    
+    // Face Recognition Enrollment
+    Route::get('/face-enroll', [\App\Http\Controllers\Auth\FaceLoginController::class, 'showEnroll'])->name('face.enroll');
+    Route::post('/face-enroll', [\App\Http\Controllers\Auth\FaceLoginController::class, 'enroll'])->name('face.enroll.store');
+    Route::delete('/face-enroll', [\App\Http\Controllers\Auth\FaceLoginController::class, 'deleteEnrollment'])->name('face.delete');
+    Route::get('/face-status', [\App\Http\Controllers\Auth\FaceLoginController::class, 'enrollmentStatus'])->name('face.status');
 });
 
 // Teacher routes

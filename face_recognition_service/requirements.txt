@@ -1,0 +1,47 @@
+# Face Recognition 3D Service - Dependencies
+# Python 3.9+ required
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Computer Vision
+opencv-python>=4.8.0
+mediapipe>=0.10.0  # Will install latest compatible version
+# dlib==19.24.2  # Optional: commented out (requires C++ compiler)
+
+# Deep Learning - Choose one:
+# Option 1: TensorFlow (recommended for production)
+# tensorflow>=2.13.0  # Commented - large download, optional for now
+# tensorflow-gpu>=2.13.0  # If you have NVIDIA GPU
+
+# Option 2: PyTorch (comment out tensorflow above if using this)
+# torch>=2.0.0  # Commented - large download, optional for now
+# torchvision>=0.15.0
+
+# Face Recognition Models
+facenet-pytorch>=2.5.0  # FaceNet implementation
+
+# Scientific Computing
+numpy>=1.24.0
+scikit-learn>=1.3.0
+scipy>=1.11.0
+
+# Image Processing
+pillow>=10.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+redis>=5.0.0
+requests>=2.31.0
+
+# Database
+pymysql>=1.1.0
+cryptography>=41.0.0  # For encrypted connections
+
+# Logging & Monitoring
+loguru>=0.7.0
+
+# Anti-Spoofing (optional but recommended)
+# silent-face-anti-spoofing==1.0.0  # Uncomment if needed
