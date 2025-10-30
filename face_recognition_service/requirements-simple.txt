@@ -1,0 +1,32 @@
+# Simple Face Recognition - WITHOUT MediaPipe
+# Uses dlib for face detection instead (2D only, no 3D landmarks)
+
+# Web Framework
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Computer Vision
+opencv-python
+# mediapipe  # Skipped - requires Python 3.11
+
+# Face Recognition
+face-recognition  # Simple library using dlib
+# facenet-pytorch  # Skipped - requires torch (large)
+
+# Utilities
+numpy
+scikit-learn
+pillow
+python-dotenv
+loguru
+
+# Database
+pymysql
+cryptography
+
+# Caching (Optional)
+# redis  # Can skip for now
+
+# HTTP Client
+requests

@@ -1,0 +1,33 @@
+# Minimal requirements for quick testing
+# Install this first, then add AI models later
+
+# Web Framework (Required)
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Computer Vision (Required)
+opencv-python
+mediapipe
+
+# Face Recognition (Required)
+facenet-pytorch
+torch
+torchvision
+
+# Utilities (Required)
+numpy
+scikit-learn
+pillow
+python-dotenv
+loguru
+
+# Database (Required)
+pymysql
+cryptography
+
+# Caching (Optional - can skip for now)
+redis
+
+# HTTP Client
+requests
